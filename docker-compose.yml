@@ -1,0 +1,63 @@
+version: '3.8'
+
+networks:
+  application:
+    driver: host
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    ports:
+      - "8000:80"  # Maps host port 8000 to container's Apache/Nginx port 80
+    volumes:
+      - .:/var/www/html  # Mounts current project directory to the container
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:placeholderKeyHere  # Replace with `php artisan key:generate`
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=ims  # Your database name
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      - mysql
+      - mailpit
+    networks:
+      - application 
+
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    ports:
+      - "3307:3306"  # Host port 3307 mapped to container's MySQL port 3306
+    volumes:
+      - dbdata:/var/lib/mysql  # Persistent database storage
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ims  # Database name
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    networks:
+      - application
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --password=root || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "1025:1025"  # SMTP service for sending emails
+      - "8025:8025"  # Web interface for viewing emails
+    networks:
+      - application
+
+volumes:
+  dbdata:
