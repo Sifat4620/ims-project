@@ -1,0 +1,3 @@
+[submodule "ims.app"]
+	path = ims.app
+	url = https://github.com/username/example-repo.git
