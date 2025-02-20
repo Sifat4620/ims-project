@@ -95,10 +95,10 @@
                                 
                                 <!-- Add New Item -->
                                 <div>
-                                    <button type="button" id="addRow" class="btn btn-sm btn-primary-600 radius-8 d-inline-flex align-items-center gap-1">
+                                    {{-- <button type="button" id="addRow" class="btn btn-sm btn-primary-600 radius-8 d-inline-flex align-items-center gap-1">
                                         <iconify-icon icon="simple-line-icons:plus" class="text-xl"></iconify-icon>
                                         Add New
-                                    </button>
+                                    </button> --}}
                                     <script>
                                         document.getElementById('addRow').addEventListener('click', function() {
                                             const table = document.querySelector('table tbody');

@@ -97,7 +97,7 @@
 
                                     <!-- Purchase Order Document -->
                                     <div class="col-md-6">
-                                        <label for="purchase_order_document" class="form-label">Purchase Order Document</label>
+                                        <label for="purchase_order_document" class="form-label">SIL Document</label>
                                         <div class="file-upload-wrapper">
                                             <button class="file-upload-button" type="button">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> Upload
@@ -109,7 +109,7 @@
 
                                     <!-- Invoice Document -->
                                     <div class="col-md-6">
-                                        <label for="invoice_document" class="form-label">Invoice Document</label>
+                                        <label for="invoice_document" class="form-label">Customer Purchase Order</label>
                                         <div class="file-upload-wrapper">
                                             <button class="file-upload-button" type="button">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> Upload

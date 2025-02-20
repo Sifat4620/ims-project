@@ -84,7 +84,7 @@
                             <th scope="col">Specification</th>
                             <th scope="col">Holding Location</th>
                             <th scope="col">Condition</th>
-                            <th scope="col">Availability</th>
+                            <th scope="col">Issued</th>
                         </tr>
                     </thead>
                     <tbody>

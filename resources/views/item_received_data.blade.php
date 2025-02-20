@@ -25,7 +25,7 @@
                                             <th scope="col">Serial NO</th>
                                             <th scope="col">Specification</th>
                                             <th scope="col">Item Condition</th>
-                                            <th scope="col">Availability</th>
+                                            <th scope="col">Issued</th>
                                             {{-- <th scope="col">Item Image</th> --}}
                                         </tr>
                                     </thead>

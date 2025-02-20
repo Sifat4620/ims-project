@@ -68,7 +68,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="issue-status" class="form-label">Status</label>
+                            <label for="issue-status" class="form-label">Issued</label>
                             <select class="form-select" id="issue-status" name="status">
                                 <option value="No">No</option>
                                 <option value="Yes">Yes</option>

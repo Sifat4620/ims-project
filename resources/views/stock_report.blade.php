@@ -48,7 +48,7 @@
                                 <th scope="col">Serial Numbers</th>
                                 <th scope="col">Total Qty</th>
                                 <th scope="col">Specification</th>
-                                <th scope="col">Status</th>
+                                <th scope="col">Issued</th>
                                 <th scope="col">Download</th>
                             </tr>
                         </thead>
