@@ -130,10 +130,6 @@ Route::middleware('auth')->group(function () {
         // Route for showing the next invoice number
         Route::get('/invoice/show-number', [ConfirmInvoiceController::class, 'showInvoiceNumber'])->name('invoice.showNumber');
        
-
-
-
-
         // Route for Invoice Download
         Route::get('/logistics/invoice-download', [App\Http\Controllers\InvoiceDownloadController::class, 'index'])->name('logistics.invoicedownload');
 
