@@ -1,5 +1,5 @@
-{{-- local-file-upload Section --}}
 @extends('partials.layouts.layoutTop')
+
 @section('content')
     <div class="container-fluid h-100">
         <div class="row h-100 m-0">
@@ -13,25 +13,36 @@
                     </div>
 
                     <div class="card-body h-100 overflow-auto">
+                        <!-- Success or Error Message -->
+                        @if(session('success'))
+                            <div class="alert alert-success mt-3">{{ session('success') }}</div>
+                        @elseif(session('error'))
+                            <div class="alert alert-danger mt-3">{{ session('error') }}</div>
+                        @endif
+
                         <form action="{{ route('upload.storeLocalFileUpload') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Section 1: LC Details -->
                             <div class="row mb-4">
-                                
                                 <div class="col-md-6 mb-3">
                                     <label for="po_ref" class="form-label">PO Reference</label>
-                                    <input type="text" class="form-control" id="po_ref" name="po_ref" placeholder="Enter PO Reference" required>
+                                    <input type="text" class="form-control @error('po_ref') is-invalid @enderror" id="po_ref" name="po_ref" placeholder="Enter PO Reference" value="{{ old('po_ref') }}" required>
+                                    @error('po_ref')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="total_amount" class="form-label">Total Amount</label>
-                                    <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Enter Total Amount" required>
+                                    <input type="number" step="any" class="form-control @error('total_amount') is-invalid @enderror" id="total_amount" name="total_amount" placeholder="Enter Total Amount" value="{{ old('total_amount') }}" required>
+                                    @error('total_amount')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
                             <!-- Section 2: Document Upload -->
                             <div class="mb-4">
-                                
                                 <div class="row g-3">
                                     <style>
                                         .file-upload-wrapper {
@@ -74,13 +85,15 @@
                                     <div class="col-md-6">
                                         <label for="requisition_document" class="form-label">Requisition Document</label>
                                         <div class="file-upload-wrapper">
-                                            <button class="file-upload-button" type="button" s>
-                                                <i class="bi bi-file-earmark-arrow-up"></i>
-                                                    Upload
+                                            <button class="file-upload-button" type="button">
+                                                <i class="bi bi-file-earmark-arrow-up"></i> Upload
                                             </button>
-                                            <input type="file" class="file-upload-input" id="requisition_document" name="requisition_document" onchange="showFileName(this, 'requisitionFileName')" required>
+                                            <input type="file" class="file-upload-input @error('requisition_document') is-invalid @enderror" id="requisition_document" name="requisition_document" onchange="showFileName(this, 'requisitionFileName')" required>
                                             <span id="requisitionFileName" class="file-name">No file chosen</span>
                                         </div>
+                                        @error('requisition_document')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Management Approval Document -->
@@ -90,9 +103,12 @@
                                             <button class="file-upload-button" type="button">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> Upload
                                             </button>
-                                            <input type="file" class="file-upload-input" id="management_approval_document" name="management_approval_document" onchange="showFileName(this, 'approvalFileName')" required>
+                                            <input type="file" class="file-upload-input @error('management_approval_document') is-invalid @enderror" id="management_approval_document" name="management_approval_document" onchange="showFileName(this, 'approvalFileName')" required>
                                             <span id="approvalFileName" class="file-name">No file chosen</span>
                                         </div>
+                                        @error('management_approval_document')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Purchase Order Document -->
@@ -102,9 +118,12 @@
                                             <button class="file-upload-button" type="button">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> Upload
                                             </button>
-                                            <input type="file" class="file-upload-input" id="purchase_order_document" name="purchase_order_document" onchange="showFileName(this, 'purchaseOrderFileName')" required>
+                                            <input type="file" class="file-upload-input @error('purchase_order_document') is-invalid @enderror" id="purchase_order_document" name="purchase_order_document" onchange="showFileName(this, 'purchaseOrderFileName')" required>
                                             <span id="purchaseOrderFileName" class="file-name">No file chosen</span>
                                         </div>
+                                        @error('purchase_order_document')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Invoice Document -->
@@ -114,19 +133,24 @@
                                             <button class="file-upload-button" type="button">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> Upload
                                             </button>
-                                            <input type="file" class="file-upload-input" id="invoice_document" name="invoice_document" onchange="showFileName(this, 'invoiceFileName')" required>
+                                            <input type="file" class="file-upload-input @error('invoice_document') is-invalid @enderror" id="invoice_document" name="invoice_document" onchange="showFileName(this, 'invoiceFileName')" required>
                                             <span id="invoiceFileName" class="file-name">No file chosen</span>
                                         </div>
+                                        @error('invoice_document')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Section 3: Remarks -->
                             <div class="mb-4">
-                            
                                 <div class="mb-3">
                                     <label for="remarks" class="form-label">Remarks</label>
-                                    <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Enter remarks here"></textarea>
+                                    <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3" placeholder="Enter remarks here">{{ old('remarks') }}</textarea>
+                                    @error('remarks')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 

@@ -42,8 +42,8 @@ class SidebarMenu
                         'link' => 'javascript:void(0)', 
                         'subchild' => [
                             ['name' => 'Product List','page_id' => 8,'link' => route('logistics.invoicelist'),'icon_color' => 'text-warning-main'],
-                            ['name' => 'Confirm','page_id' => 9,'link' => route('logistics.invoiceconfirm'),'icon_color' => 'text-primary-600'],
-                            ['name' => 'Invoice Download','page_id' => 10,'link' => route('logistics.invoicedownload'),'icon_color' => 'text-danger-600']
+                            ['name' => 'Create Delivery Challan','page_id' => 9,'link' => route('logistics.invoiceconfirm'),'icon_color' => 'text-primary-600'],
+                            ['name' => 'Print Delivery Challan','page_id' => 10,'link' => route('logistics.invoicedownload'),'icon_color' => 'text-danger-600']
                             // ['name' => 'Edit','page_id' => 11,'link' => 'invoice-edit.php','icon_color' => 'text-success-main']
                         ],
                     ],

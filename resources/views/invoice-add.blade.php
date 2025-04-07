@@ -41,8 +41,10 @@
                                         <h3 class="fs-6 mb-1">Date Issued:</h3>
                                         <input type="date" class="form-control text-sm underline-input" name="date_issued" value="2020-08-25">
                                         <div class="border border-5 p-3 text-center"> 
+                                            {{-- PO check --}}
                                             <p class="mb-1 text-sm">PO No.:</p>
                                             <input type="text" class="form-control text-sm mb-1 underline-input" name="po_number" placeholder="Enter PO number">
+                                            {{-- PO check --}}
                                             <label class="form-label text-sm mb-1">PO Date:</label>
                                             <input type="date" class="form-control text-sm underline-input" name="po_date">
                                             <hr class="my-2 border-3 border-dark">
