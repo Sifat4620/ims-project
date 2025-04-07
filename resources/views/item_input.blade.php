@@ -354,11 +354,8 @@
         });
     });
 </script>
-
-
-    
+   
 @endsection
-
 
 @section('extra-js')
 <script src="{{ asset('assets/js/homeFiveChart.js') }}"></script>
