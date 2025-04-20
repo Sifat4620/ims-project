@@ -66,6 +66,9 @@ Route::middleware('auth')->group(function () {
         // undone
 
         Route::get('/logistics/core-data', [App\Http\Controllers\CoreDataController::class, 'index'])->name('logistics.coredata');
+
+        Route::get('/logistics/alldocuments', [App\Http\Controllers\LogisticsController::class, 'allDocuments'])->name('logistics.alldocuments');
+
         // Logistics Management end
 
         // data entry start

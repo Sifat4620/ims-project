@@ -117,8 +117,8 @@ class SidebarMenu
                             // ['name' => 'Gate Pass', 'page_id' => 3, 'link' => 'table-data.php', 'icon_color' => 'text-warning-main'],
                             ['name' => 'Returnable','page_id' => 4,'link' => route('logistics.returnable'),'icon_color' => 'text-danger-600'],
                             ['name' => 'Defective','page_id' => 5,'link' => route('logistics.defective'),'icon_color' => 'text-success-main'],
-                            // ['name' => 'Warranty Log','page_id' => 6,'link' => 'table-basic.php','icon_color' => 'text-danger-main'],
-                            ['name' => 'Master Data','page_id' => 7,'link' => route('logistics.coredata'),'icon_color' => 'text-primary-600']
+                            ['name' => 'Master Data','page_id' => 7,'link' => route('logistics.coredata'),'icon_color' => 'text-primary-600'],
+                            ['name' => 'All Documents','page_id' => 6,'link' => route('logistics.alldocuments'),'icon_color' => 'text-danger-main'],
                         ] 
                     ],
                 ],
