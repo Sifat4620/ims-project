@@ -23,6 +23,8 @@ use App\Http\Controllers\InvoiceListController;
 use App\Http\Controllers\ReturnStatusLogController;
 use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\DefectiveItemsReportController;
+use App\Http\Controllers\AllDocumentsController;
+
 
 
 
@@ -67,7 +69,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/logistics/core-data', [App\Http\Controllers\CoreDataController::class, 'index'])->name('logistics.coredata');
 
-        Route::get('/logistics/alldocuments', [App\Http\Controllers\LogisticsController::class, 'allDocuments'])->name('logistics.alldocuments');
+        Route::get('/logistics/alldocuments', [AllDocumentsController::class, 'index'])->name('logistics.alldocuments');
+        // Route::get('/documents/{id}/edit', [DocumentController::class, 'edit'])->name('documents.edit');
+
+
 
         // Logistics Management end
 
@@ -192,8 +197,8 @@ Route::middleware('auth')->group(function () {
 
 
         
-        Route::get('/product-warranty-overview', [WarrantyReportController::class, 'productWarrantyOverview'])->name('productwarranty');
-        Route::get('/revenue-summary', [RevenueReportController::class, 'revenueSummary'])->name('revenuesummary');
+        // Route::get('/product-warranty-overview', [WarrantyReportController::class, 'productWarrantyOverview'])->name('productwarranty');
+        // Route::get('/revenue-summary', [RevenueReportController::class, 'revenueSummary'])->name('revenuesummary');
 
 
         Route::prefix('reports')->name('reports.')->group(function () {
@@ -203,8 +208,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/po-stock-report', [StockReportController::class, 'poStockReport'])->name('postockreport');
             Route::get('/lc-wise-stock', [StockReportController::class, 'lcWiseStock'])->name('lcwisestock');
             Route::get('/defective-items-report', [DefectiveItemsReportController::class, 'defectiveProductsReport'])->name('defectiveitems');
-            Route::get('/product-warranty-overview', [WarrantyReportController::class, 'productWarrantyOverview'])->name('productwarranty');
-            Route::get('/revenue-summary', [RevenueReportController::class, 'revenueSummary'])->name('revenuesummary');
+            // Route::get('/product-warranty-overview', [WarrantyReportController::class, 'productWarrantyOverview'])->name('productwarranty');
+            // Route::get('/revenue-summary', [RevenueReportController::class, 'revenueSummary'])->name('revenuesummary');
         });
 
         // Report Section End
