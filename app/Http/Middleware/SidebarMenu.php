@@ -151,10 +151,11 @@ class SidebarMenu
             // ],
             [
                 'title' => 'System Monitoring',
-                'icon' => 'icon-park-outline:trend-two',
-                'link' => 'system-monitoring.php',
-                'icon_color' => 'text-success-main'
-            ],
+                'icon' => 'icon-park-outline:trend-two', // You can replace this with any icon you prefer
+                'link' => route('telescope'), // Laravel route to Telescope page
+                'icon_color' => 'text-success-main',
+            ]
+            
         ];
         
         View::share('menuItems', $menuItems);

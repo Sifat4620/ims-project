@@ -13,7 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Call the AdminUserSeeder or any other seeders
-        $this->call(AdminUserSeeder::class);  
+        // Call the RoleSeeder to insert roles
+        $this->call(RoleSeeder::class);
+
+        // Call the AdminUserSeeder to insert admin user
+        $this->call(AdminUserSeeder::class);
+
+        // Add any other seeders you want to call
+        // $this->call(OtherSeeder::class);
     }
 }
