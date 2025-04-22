@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use Silber\Bouncer\BouncerFacade as Bouncer;
+use Illuminate\Support\Facades\Log; 
 
 class SidebarMenu
 {
@@ -23,7 +26,7 @@ class SidebarMenu
                 'icon' => 'solar:home-smile-angle-outline',
                 'link' => route('dashboard'),
                 'submenus' => [],
-                'icon_color' => 'text-primary-600'
+                'icon_color' => 'text-primary-600',
             ],
            
             [
@@ -143,23 +146,55 @@ class SidebarMenu
                 ],
                 'icon_color' => 'text-secondary-600'
             ],
-            // [
-            //     'title' => 'Chat',
-            //     'icon' => 'bi:chat-dots',
-            //     'link' => 'chat-message.php',
-            //     'icon_color' => 'text-primary-600'
-            // ],
             [
                 'title' => 'System Monitoring',
-                'icon' => 'icon-park-outline:trend-two', // You can replace this with any icon you prefer
-                'link' => route('telescope'), // Laravel route to Telescope page
+                'icon' => 'icon-park-outline:trend-two', 
+                'link' => route('telescope'),
                 'icon_color' => 'text-success-main',
+                'visibility' => Auth::check() && Bouncer::is(Auth::user())->an('Admin'),
             ]
             
         ];
+
+        Log::info('Admin Role Check', ['admin_check' => Bouncer::is(Auth::user())->an('Admin')]);
         
+        // Filter out menu items based on roles/permissions
+        $menuItems = $this->filterMenuItemsBasedOnRole($menuItems);
         View::share('menuItems', $menuItems);
 
         return $next($request);
+    }
+    /**
+     * Filter the menu items based on user roles or permissions.
+     *
+     * @param array $menuItems
+     * @return array
+     */
+    private function filterMenuItemsBasedOnRole(array $menuItems)
+    {
+        // Filter out menu items based on roles/permissions
+        foreach ($menuItems as &$menuItem) {
+            // If the item has 'visibility' set to false, we hide it
+            if (isset($menuItem['visibility']) && !$menuItem['visibility']) {
+                $menuItem = null; // Hide the menu item
+            }
+
+            // Optionally, filter submenus based on the same criteria
+            if (isset($menuItem['submenus'])) {
+                foreach ($menuItem['submenus'] as &$submenu) {
+                    foreach ($submenu['subchild'] as &$subchild) {
+                        // Check role-based visibility for subchild
+                        if (isset($subchild['visibility']) && !$subchild['visibility']) {
+                            $subchild = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove null values (hidden menu items)
+        return array_filter($menuItems, function ($menuItem) {
+            return $menuItem !== null;
+        });
     }
 }

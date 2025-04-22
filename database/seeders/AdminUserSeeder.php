@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Bouncer;
+use App\Models\User;
 
 class AdminUserSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         // Insert admin user
-        $userId = DB::table('users')->insertGetId([
+        $user = User::create([
             'full_name' => 'Fahim Faisal Sifat',
             'user_id' => '70',
             'email' => 'admin@sil.com',
@@ -30,17 +31,10 @@ class AdminUserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Ensure the 'Admin' role exists with ID 1
-        $adminRoleId = DB::table('roles')->where('designation', 'Admin')->value('id');
+        // Ensure the 'Admin' role exists using Bouncer
+        $role = Bouncer::role()->firstOrCreate(['name' => 'Admin', 'title' => 'Admin']);
 
-        // Assign the 'Admin' role to the user in the role_user pivot table
-        if ($adminRoleId) {
-            DB::table('role_user')->insert([
-                'role_id' => $adminRoleId,
-                'user_id' => $userId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        // Assign the 'Admin' role to the user using Bouncer
+        $user->assign($role);
     }
 }

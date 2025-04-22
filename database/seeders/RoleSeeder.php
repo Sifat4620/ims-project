@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Bouncer; // Import the Bouncer facade
 
 class RoleSeeder extends Seeder
 {
@@ -16,27 +16,21 @@ class RoleSeeder extends Seeder
     {
         // Array of roles to be inserted
         $roles = [
-            ['designation' => 'Admin'],
-            ['designation' => 'Director'],
-            ['designation' => 'Inventory Manager'],
-            ['designation' => 'Inventory Entry'],
-            ['designation' => 'Sales'],
-            ['designation' => 'Visitor'],
+            ['name' => 'Admin', 'title' => 'Admin', 'scope' => 1],  
+            ['name' => 'Director', 'title' => 'Director', 'scope' => 2],  
+            ['name' => 'Inventory Manager', 'title' => 'Inventory Manager', 'scope' => 2],  
+            ['name' => 'Inventory Entry', 'title' => 'Inventory Entry', 'scope' => 2],  
+            ['name' => 'Sales', 'title' => 'Sales', 'scope' => 2],  
+            ['name' => 'Visitor', 'title' => 'Visitor', 'scope' => 2],  
         ];
 
-        // Loop through the roles and insert them if they don't exist
+        // Loop through the roles and create them if they don't exist
         foreach ($roles as $role) {
-            // Check if the role already exists
-            $existingRole = DB::table('roles')->where('designation', $role['designation'])->first();
-
-            // If the role doesn't exist, insert it
-            if (!$existingRole) {
-                DB::table('roles')->insert([
-                    'designation' => $role['designation'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
+            // Create or update the role in Bouncer
+            Bouncer::role()->firstOrCreate([
+                'name' => $role['name'],
+                'title' => $role['title'],
+            ]);
         }
     }
 }

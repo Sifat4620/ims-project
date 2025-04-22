@@ -14,7 +14,7 @@ class UserCreationController extends Controller
     {
         $title = 'Create User';
         
-        // Get all roles from the roles table
+        
         $roles = Role::all();
 
         return view('add-user', compact('title', 'roles'));

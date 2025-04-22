@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Silber\Bouncer\Database\HasRolesAndAbilities;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesAndAbilities; 
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +22,6 @@ class User extends Authenticatable
         'department', 'designation', 'description', 
         'password', 'image'
     ];
-    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -34,8 +33,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-
-    
     /**
      * The attributes that should be cast.
      *
@@ -45,10 +42,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    
 
-    // In User.php model
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'designation');
-    }
 }

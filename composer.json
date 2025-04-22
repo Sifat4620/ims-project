@@ -11,7 +11,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/telescope": "^5.7",
         "laravel/tinker": "^2.7",
-        "silber/bouncer": "^1.0"
+        "silber/bouncer": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

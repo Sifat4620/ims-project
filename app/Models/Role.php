@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Silber\Bouncer\Database\Role as BouncerRole; // Bouncer's Role
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class Role extends Model
+class Role extends BouncerRole
 {
     use HasFactory;
 
@@ -14,4 +15,14 @@ class Role extends Model
 
     // Allow mass assignment for the 'designation' field
     protected $fillable = ['designation'];
+
+    /**
+     * Define the abilities associated with this role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function abilities(): MorphToMany
+    {
+        return $this->morphedByMany(Ability::class, 'ability');
+    }
 }

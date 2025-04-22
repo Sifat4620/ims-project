@@ -69,9 +69,9 @@
                                 </div>
                                 <div class="mb-20">
                                     <label for="desig" class="form-label fw-semibold text-primary-light text-sm mb-8">Designation <span class="text-danger-600">*</span></label>
-                                    <select class="form-control radius-8 form-select" name="designation" id="desig" required>
+                                    <select class="form-control radius-8 form-select" name="title" id="desig" required>
                                         @foreach($roles as $role)
-                                            <option value="{{ $role->id }}">{{ $role->designation }}</option>
+                                            <option value="{{ $role->id }}">{{ $role->title }}</option>
                                         @endforeach
                                     </select>
                                 </div>
