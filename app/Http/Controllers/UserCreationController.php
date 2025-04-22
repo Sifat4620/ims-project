@@ -7,6 +7,7 @@ use App\Models\User; // Import the User model
 use App\Models\Role; // Import the Role model to fetch designations
 use Illuminate\Support\Facades\Storage; // To handle file storage
 use Illuminate\Support\Facades\Hash; // For hashing the password
+use Bouncer;
 
 class UserCreationController extends Controller
 {
@@ -16,7 +17,8 @@ class UserCreationController extends Controller
         $title = 'Create User';
         
         // Fetch all roles for designation dropdown
-        $roles = Role::all();
+        $roles = Bouncer::role()->get();
+        dd($roles); // This will dump the roles and stop further execution
 
         // Return the 'add-user' view with title and roles
         return view('add-user', compact('title', 'roles'));
