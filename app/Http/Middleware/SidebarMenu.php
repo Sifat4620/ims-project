@@ -144,7 +144,8 @@ class SidebarMenu
                         ]
                     ],
                 ],
-                'icon_color' => 'text-secondary-600'
+                'icon_color' => 'text-secondary-600',
+                'visibility' => Auth::check() && Bouncer::is(Auth::user())->an('Admin'),
             ],
             [
                 'title' => 'System Monitoring',
@@ -156,7 +157,7 @@ class SidebarMenu
             
         ];
 
-        Log::info('Admin Role Check', ['admin_check' => Bouncer::is(Auth::user())->an('Admin')]);
+        Log::info('Admin Role Check', ['admin_check' => Auth::check() ? Bouncer::is(Auth::user())->an('Admin') : 'User not authenticated']);
         
         // Filter out menu items based on roles/permissions
         $menuItems = $this->filterMenuItemsBasedOnRole($menuItems);

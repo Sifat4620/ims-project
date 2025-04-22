@@ -30,6 +30,8 @@ class RoleSeeder extends Seeder
             Bouncer::role()->firstOrCreate([
                 'name' => $role['name'],
                 'title' => $role['title'],
+            ], [
+                'scope' => $role['scope'], // Include scope
             ]);
         }
     }

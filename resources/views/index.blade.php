@@ -4,7 +4,7 @@
 
 <div class="row gy-4">
     <!-- Clock Widget -->
-    <div class="col-xxl-12 col-sm-6">
+    <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6">
         <div class="card px-24 py-16 shadow-none radius-8 border h-100 bg-gradient-start-6">
             <div class="card-body p-0">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
@@ -24,6 +24,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Roles Display Widget -->
+    <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+        <div class="card px-24 py-16 shadow-none radius-8 border h-100 bg-gradient-start-4">
+            <div class="card-body p-0">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-1 mb-8">
+                    <div class="d-flex align-items-center">
+                        <div class="w-64-px h-64-px radius-16 bg-base-50 d-flex justify-content-center align-items-center me-20">
+                            <span class="mb-0 w-40-px h-40-px bg-warning flex-shrink-0 text-white d-flex justify-content-center align-items-center radius-8 h6 mb-0">
+                                <iconify-icon icon="carbon:user-avatar" class="icon"></iconify-icon>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Roles</span>
+                            <h6 class="fw-semibold my-1">
+                                @foreach ($roles as $role)
+                                    <span class="badge bg-primary">{{ $role->title }}</span> <!-- Displaying the role name -->
+                                @endforeach
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Stock In Widget -->
     <div class="col-xxl-3 col-sm-6">

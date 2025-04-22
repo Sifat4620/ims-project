@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
         // Logistics Management  start
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+       
 
         Route::get('/logistics/in-stock', [InStockController::class, 'index'])->name('logistics.instock');
 

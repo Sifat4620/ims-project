@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;  
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Silber\Bouncer\BouncerFacade as Bouncer;
-
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -16,40 +16,49 @@ class AuthController extends Controller
     }
 
     // Handle the sign-in form submission
+    // In AuthController
     public function signIn(Request $request)
     {
-        // Validate the input data
-        $request->validate([
-            'user_id' => 'required|exists:users,user_id', // Ensure user_id exists in the 'users' table
-            'password' => 'required|min:6', // Ensure password is provided and has at least 6 characters
-        ]);
-      
-        // Get the credentials from the request
+        // Validate the input
         $credentials = $request->only('user_id', 'password');
-      
-        // Attempt to authenticate the user
+        
+        // Attempt login with provided credentials
         if (Auth::attempt($credentials)) {
-            // After authentication, check roles with Bouncer
-            $user = Auth::user();
-            
-            if (Bouncer::is($user)->an('Admin')) {
-                // If the user is an Admin, redirect to the dashboard
-                return redirect()->route('dashboard');
-            } else {
-                // If not an Admin, redirect or show a message
-                return redirect()->route('home')->with('message', 'You are not an Admin');
-            }
+            // The user is authenticated, retrieve user details
+            $user = Auth::user(); // Get the authenticated user
+    
+            // Access user information
+            $userName = $user->name;
+            $userEmail = $user->email;
+            $userRoles = $user->roles; // Assuming you are using Bouncer for roles
+    
+            // You can also log this information if needed (useful for debugging)
+            Log::info('User Logged In:', ['name' => $userName, 'email' => $userEmail, 'roles' => $userRoles]);
+    
+            // Redirect to the dashboard, passing along the user data if needed
+            return redirect()->route('dashboard');
         }
-      
-        // Authentication failed, redirect back with error message
-        return back()->withErrors(['user_id' => 'Invalid credentials']);
+        
+        // If authentication fails, return with an error
+        return back()->withErrors(['user_id' => 'Invalid credentials provided.']);
     }
     
 
+
     // Handle the logout functionality
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();  // Log the user out
-        return redirect()->route('auth.signin.page');  // Redirect to the sign-in page
+        // Invalidate the session and regenerate the token to protect against session fixation attacks
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Log the user out
+        Auth::logout();
+
+        // Optionally, log the logout event
+        Log::info('User logged out', ['user_id' => Auth::id()]);
+
+        // Redirect the user to the sign-in page
+        return redirect()->route('auth.signin.page');
     }
 }

@@ -1,11 +1,13 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Item; // Import the Item model
+use App\Models\Item;
 use App\Models\Returns;
 use App\Models\FaultyItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -16,15 +18,26 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $title = 'Dashboard';
+        try {
+            // Optimized queries for fetching the counts
+            $totalStockIn = Item::where('status', 'No')->count();
+            $totalStockOut = Item::where('status', 'Yes')->count();
+            $totalReturns = Returns::count();
+            $totalDamaged = FaultyItem::count();
 
-        // Fetch dashboard statistics
-        $totalStockIn = Item::where('status', 'No')->count(); // Stock In: status is 'No'
-        $totalStockOut = Item::where('status', 'Yes')->count(); // Stock Out: status is 'Yes'
-        $totalReturns = Returns::count(); // Total returns
-        $totalDamaged = FaultyItem::count(); // Total damaged (faulty items)
+            // Optional: Adding any other data (e.g., the user’s roles, or other dashboard metrics)
+            $user = Auth::user(); // If you need to pass user info for the dashboard
+            $roles = $user->roles; // Assuming you have a roles relation set up in the User model
 
-        // Pass data to the view
-        return view('index', compact('title', 'totalStockIn', 'totalStockOut', 'totalReturns', 'totalDamaged'));
+            // Preparing title dynamically or statically
+            $title = 'Dashboard';
+
+            // Pass data to the view
+            return view('index', compact('totalStockIn', 'totalStockOut', 'totalReturns', 'totalDamaged', 'title', 'roles'));
+        } catch (\Exception $e) {
+            // Log the error and show a generic error message
+            Log::error('Error loading dashboard data: ' . $e->getMessage());
+            return redirect()->route('error.page')->with('error', 'There was an issue loading the dashboard data.');
+        }
     }
 }
