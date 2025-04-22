@@ -41,22 +41,37 @@
                                 <div class="mb-20">
                                     <label for="name" class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span class="text-danger-600">*</span></label>
                                     <input type="text" class="form-control radius-8" name="full_name" id="name" placeholder="Enter Full Name" required>
+                                    @error('full_name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="employeeid" class="form-label fw-semibold text-primary-light text-sm mb-8">Employee ID<span class="text-danger-600">*</span></label>
                                     <input type="text" class="form-control radius-8" name="user_id" id="employeeid" placeholder="Enter ID" required>
+                                    @error('user_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="email" class="form-label fw-semibold text-primary-light text-sm mb-8">Email <span class="text-danger-600">*</span></label>
                                     <input type="email" class="form-control radius-8" name="email" id="email" placeholder="Enter email address" required>
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="password" class="form-label fw-semibold text-primary-light text-sm mb-8">Password <span class="text-danger-600">*</span></label>
                                     <input type="password" class="form-control radius-8" name="password" id="password" placeholder="Enter Strong Password" required>
+                                    @error('password')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="number" class="form-label fw-semibold text-primary-light text-sm mb-8">Phone</label>
                                     <input type="text" class="form-control radius-8" name="phone" id="number" placeholder="Enter phone number">
+                                    @error('phone')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="depart" class="form-label fw-semibold text-primary-light text-sm mb-8">Department <span class="text-danger-600">*</span></label>
@@ -66,6 +81,9 @@
                                         <option value="Marketing">Solutions</option>
                                         <option value="HR">TSD</option>
                                     </select>
+                                    @error('department')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="desig" class="form-label fw-semibold text-primary-light text-sm mb-8">Designation <span class="text-danger-600">*</span></label>
@@ -74,10 +92,16 @@
                                             <option value="{{ $role->id }}">{{ $role->title }}</option>
                                         @endforeach
                                     </select>
+                                    @error('title')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-20">
                                     <label for="desc" class="form-label fw-semibold text-primary-light text-sm mb-8">Description</label>
                                     <textarea name="description" class="form-control radius-8" id="desc" placeholder="Write description..."></textarea>
+                                    @error('description')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center gap-3">
                                     <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">

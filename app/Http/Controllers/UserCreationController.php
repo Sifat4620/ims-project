@@ -10,59 +10,65 @@ use Illuminate\Support\Facades\Hash; // For hashing the password
 
 class UserCreationController extends Controller
 {
+    // Show the create user form with roles data
     public function index()
     {
         $title = 'Create User';
         
-        
+        // Fetch all roles for designation dropdown
         $roles = Role::all();
 
+        // Return the 'add-user' view with title and roles
         return view('add-user', compact('title', 'roles'));
     }
 
+    // Store the new user in the database
     public function store(Request $request)
     {
-        // Validation
-        $request->validate([
+        // Validate incoming request data with custom error messages
+        $validated = $request->validate([
             'full_name' => 'required|string|max:255',
             'user_id' => 'required|string|max:255|unique:users,user_id',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8', // Removed confirmed rule
             'phone' => 'nullable|string|max:15',
-            'department' => 'required|string|max:100',
-            'designation' => 'required|string|max:100', // validation for the designation
-            'description' => 'nullable|string|max:1000',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'password' => 'required|string|min:6', // Removed confirmation
+            'department' => 'required|string|max:255',
+            'title' => 'required|exists:roles,id', 
+            'description' => 'nullable|string',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'full_name.required' => 'The full name is required.',
+            'user_id.required' => 'The employee ID is required.',
+            'email.required' => 'The email address is required.',
+            'password.required' => 'A password is required.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'phone.max' => 'The phone number must not exceed 15 characters.',
+            'department.required' => 'Please select a department.',
+            'title.required' => 'Please select a designation.',
+            'profile_image.image' => 'The uploaded file must be an image (jpeg, png, jpg).',
+            'profile_image.max' => 'The image must not exceed 2MB.',
         ]);
-
-        // Handle file upload
+        
+        // Handle image upload if provided
         $imagePath = null;
         if ($request->hasFile('profile_image')) {
-            // Use 'full_name' as the file name
-            $imageName = $request->full_name . '.' . $request->file('profile_image')->getClientOriginalExtension();
-
-            // Save the file to the 'public/assets/profile_image' folder
-            $imagePath = $request->file('profile_image')->storeAs('public/assets/profile_image', $imageName);
-        } else {
-            // Default image if no file is uploaded
-            $imagePath = 'assets/profile_image/default_avatar.png'; // Default image path
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
         }
 
-        // Create new user record
-        $user = new User([
-            'full_name' => $request->input('full_name'),
-            'user_id' => $request->input('user_id'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'department' => $request->input('department'),
-            'designation' => $request->input('designation'),
-            'description' => $request->input('description'),
-            'profile_image' => $imagePath,
-            'password' => Hash::make($request->input('password')), // Hash the password before saving
+        // Store the user data
+        User::create([
+            'full_name' => $request->full_name,
+            'user_id' => $request->user_id,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'department' => $request->department,
+            'designation' => $request->title, 
+            'description' => $request->description,
+            'password' => Hash::make($request->password),
+            'image' => $imagePath,
         ]);
 
-        $user->save();
-
-        return redirect()->route('user.create')->with('success', 'User created successfully!');
+        return redirect()->route('user.index')->with('success', 'User created successfully.');
     }
+
 }
