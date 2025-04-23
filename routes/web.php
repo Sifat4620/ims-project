@@ -230,6 +230,8 @@ Route::middleware('auth')->group(function () {
 
         // Route for Role Assignment Page
         Route::get('/role-assign/{user}', [App\Http\Controllers\RoleAssignmentController::class, 'index'])->name('role.assign');
+
+        
         // Route for View Profile Page
         Route::get('/user-profile/{user}', [App\Http\Controllers\ViewProfileController::class, 'index'])->name('user.profile');
         

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Bouncer;
+use Silber\Bouncer\BouncerFacade as Bouncer;
 use App\Models\User;
 
 class AdminUserSeeder extends Seeder
@@ -23,9 +23,9 @@ class AdminUserSeeder extends Seeder
             'email' => 'admin@sil.com',
             'phone' => null,
             'department' => 'Administration',
-            'designation' => '1', // Assuming '1' corresponds to the admin role
+            'designation' => '1', 
             'description' => 'System Administrator',
-            'password' => Hash::make('123456'), // Use a hashed password
+            'password' => Hash::make('123456'), 
             'image' => null,
             'created_at' => now(),
             'updated_at' => now(),

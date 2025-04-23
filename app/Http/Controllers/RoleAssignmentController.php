@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -12,7 +11,7 @@ class RoleAssignmentController extends Controller
     public function index()
     {
         // Retrieve all users along with their associated roles
-        $users = User::with('role')->get(); // Assuming each user has one role
+        $users = User::with('roles')->get(); // Assuming each user has one or more roles
 
         // Get all available roles for assignment
         $roles = Role::all(); // You can filter roles based on your requirements
@@ -23,6 +22,4 @@ class RoleAssignmentController extends Controller
         // Return the view with users, roles, and title
         return view('users-grid', compact('title', 'users', 'roles'));
     }
-
-  
 }

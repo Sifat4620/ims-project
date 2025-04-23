@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Import the User model
-use App\Models\Role; // Import the Role model to fetch designations
-use Illuminate\Support\Facades\Storage; // To handle file storage
-use Illuminate\Support\Facades\Hash; // For hashing the password
-use Bouncer;
+use App\Models\User; 
+use App\Models\Role; 
+use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Hash;
+use Silber\Bouncer\BouncerFacade as Bouncer;
+use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class UserCreationController extends Controller
 {
@@ -15,14 +17,17 @@ class UserCreationController extends Controller
     public function index()
     {
         $title = 'Create User';
-        
+    
         // Fetch all roles for designation dropdown
-        $roles = Bouncer::role()->get();
-        dd($roles); // This will dump the roles and stop further execution
-
+        $roles = DB::select('SELECT * FROM roles');
+    
+        // Debugging the roles
+        // dd($roles);  // This will dump the roles before returning the view
+    
         // Return the 'add-user' view with title and roles
         return view('add-user', compact('title', 'roles'));
     }
+    
 
     // Store the new user in the database
     public function store(Request $request)
@@ -70,7 +75,7 @@ class UserCreationController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('user.index')->with('success', 'User created successfully.');
+        return redirect()->route('user.create')->with('success', 'User created successfully.');
     }
 
 }
