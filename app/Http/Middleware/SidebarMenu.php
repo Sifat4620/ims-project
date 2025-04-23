@@ -67,8 +67,8 @@ class SidebarMenu
                     Bouncer::is(Auth::user())->an('Inventory Manager') || 
                     Bouncer::is(Auth::user())->an('Inventory Entry') || 
                     Bouncer::is(Auth::user())->an('Sales') || 
-                    Bouncer::is(Auth::user())->an('Admin') || 
-                    Bouncer::is(Auth::user())->an('Director')
+                    Bouncer::is(Auth::user())->an('Admin') 
+                   
                 ),
             ],
             
@@ -163,7 +163,6 @@ class SidebarMenu
                  'visibility' => Auth::check(),
 
             ],
-
 
             // Admin can only
             [

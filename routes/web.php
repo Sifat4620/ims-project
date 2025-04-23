@@ -75,7 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/logistics/alldocuments', [AllDocumentsController::class, 'index'])->name('logistics.alldocuments');
         // Route::get('/documents/{id}/edit', [DocumentController::class, 'edit'])->name('documents.edit');
 
-
+        Route::get('/documents/{lcpoNo}/download', [AccessController::class, 'download'])->name('documents.download');
 
         // Logistics Management end
 
@@ -243,6 +243,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/view-profile/{user}', [ViewProfileController::class, 'index'])->name('view.profile');
 
         // Security end
+
+
+        // Access point start
+
+          Route::get('/accessing', [App\Http\Controllers\AccessController::class, 'show'])->name('accessing');
+        // Access point end
+        
 
 
 });

@@ -7,15 +7,23 @@ use Illuminate\Http\Request;
 
 class AllDocumentsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch documents with pagination (10 documents per page)
-        $documents = UploadDocument::paginate(10); // Use UploadDocument instead of Document
-
-        // Define the title for the page
+        $perPage = $request->input('perPage', 10);
+        $searchField = $request->input('search_field', 'all');
+        $search = $request->input('search', '');
+    
+        $documentsQuery = UploadDocument::query();
+    
+        if ($searchField !== 'all' && !empty($search)) {
+            $documentsQuery->where($searchField, 'like', "%{$search}%");
+        }
+    
+        $documents = $documentsQuery->paginate($perPage);
+    
         $title = 'All Documents';
-
-        // Return the view with documents and title
-        return view('alldocuments', compact('title', 'documents'));
+    
+        return view('alldocuments', compact('title', 'documents', 'perPage', 'searchField', 'search'));
     }
+    
 }
