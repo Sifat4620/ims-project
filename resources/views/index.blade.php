@@ -24,6 +24,27 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            
+            // Update the clock's inner HTML
+            document.getElementById('clock').textContent = timeString;
+        }
+    
+        // Call the updateClock function every second
+        setInterval(updateClock, 1000);
+    
+        // Call it once initially to avoid delay
+        updateClock();
+    </script>
+    
 
     <!-- Roles Display Widget -->
     <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -140,36 +161,4 @@
 
 <!-- Move the JavaScript outside the content section -->
 @section('extra-js')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        console.log("DOM fully loaded and parsed"); // Check if the DOM content is loaded
-        
-        // Function to update the clock
-        function updateClock() {
-            const clockElement = document.getElementById('clock');
-            
-            if (clockElement) {
-                console.log("Clock element found"); // Check if the clock element is found
-                
-                const options = {
-                    timeZone: 'Asia/Dhaka', // Set timezone to Dhaka
-                    hour12: true, // 12-hour format
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                };
-                
-                const currentTime = new Date().toLocaleTimeString('en-US', options);
-                console.log("Current Time: " + currentTime); // Log current time to the console
-                clockElement.textContent = currentTime; // Update the clock text
-            } else {
-                console.log("Clock element not found."); // If the clock element is not found
-            }
-        }
-
-        // Update the clock every second
-        setInterval(updateClock, 1000); 
-        updateClock(); // Update the clock immediately on load
-    });
-</script>
 @endsection

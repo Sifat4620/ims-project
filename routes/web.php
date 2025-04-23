@@ -25,6 +25,7 @@ use App\Http\Controllers\ReturnStatusLogController;
 use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\DefectiveItemsReportController;
 use App\Http\Controllers\AllDocumentsController;
+use App\Http\Controllers\AccessController;
 
 
 

@@ -29,12 +29,23 @@ class SidebarMenu
                 'icon_color' => 'text-primary-600',
             ],
            
+
+            // Admin, Invertory manager , Invertory Entry , Sales
             [
                 'title' => 'Product Entry',
                 'icon' => 'heroicons:document',
                 'link' => route('dataentry.index'),
-                'icon_color' => 'text-success-600'
+                'icon_color' => 'text-success-600',
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
+                    Bouncer::is(Auth::user())->an('Inventory Entry') || 
+                    Bouncer::is(Auth::user())->an('Sales') ||
+                    Bouncer::is(Auth::user())->an('Admin')
+                ),
+
             ], 
+
+            // Invertory manager , Invertory Entry , Sales, Dircetor
             [
                 'title' => 'Product Issue',
                 'icon' => 'hugeicons:invoice-03',
@@ -51,9 +62,17 @@ class SidebarMenu
                         ],
                     ],
                 ],
-                'icon_color' => 'text-info-600'
+                'icon_color' => 'text-info-600',
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
+                    Bouncer::is(Auth::user())->an('Inventory Entry') || 
+                    Bouncer::is(Auth::user())->an('Sales') || 
+                    Bouncer::is(Auth::user())->an('Admin') || 
+                    Bouncer::is(Auth::user())->an('Director')
+                ),
             ],
             
+            // All 
             [
                 'title' => 'Inventory Report',
                 'icon' => 'solar:pie-chart-outline',
@@ -72,9 +91,11 @@ class SidebarMenu
                         ]
                     ],
                 ],
-                'icon_color' => 'text-success-main'
+                'icon_color' => 'text-success-main',
+                'visibility' => Auth::check(),
             ],
-                     
+               
+            // Sale ,admin and inventory manager see this
             [
                 'title' => 'Procurement Document',
                 'icon' => 'heroicons:cloud-arrow-up',
@@ -89,23 +110,36 @@ class SidebarMenu
                         ]
                     ],
                 ],
-                'icon_color' => 'text-secondary-600'
+                'icon_color' => 'text-secondary-600',
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Inventory Entry') || 
+                    Bouncer::is(Auth::user())->an('Admin') || 
+                    Bouncer::is(Auth::user())->an('Sales') || 
+                    Bouncer::is(Auth::user())->an('Inventory Manager')
+                ),
+
             ],
 
+            // Inventory Entry and Admin see this
             [
                 'title' => 'Master Data Entry',
                 'icon' => 'heroicons:clipboard',
                 'link' => route('coreinventory.primaryrecords'),
-                'icon_color' => 'text-muted'
+                'icon_color' => 'text-muted',
+                'visibility' => Auth::check() && (Bouncer::is(Auth::user())->an('Inventory Entry') || Bouncer::is(Auth::user())->an('Admin')),
             ],   
+
+            // Inventory Manager and Admin see this
             [
                 'title' => 'Return Product Management',
                 'icon' => 'simple-line-icons:vector',
                 'link' => route('logistics.returnstatuslog'),
-                'icon_color' => 'text-warning-main'
+                'icon_color' => 'text-warning-main',
+                'visibility' => Auth::check() && (Bouncer::is(Auth::user())->an('Inventory Manager') || Bouncer::is(Auth::user())->an('Admin')),
+
             ],
             
-           
+            // All User see this
             [
                 'title' => 'Inventory Management',
                 'icon' => 'mingcute:storage-line',
@@ -125,9 +159,20 @@ class SidebarMenu
                         ] 
                     ],
                 ],
-                'icon_color' => 'text-secondary-600'
+                'icon_color' => 'text-secondary-600',
+                 'visibility' => Auth::check(),
+
             ],
-            // Security
+
+
+            // Admin can only
+            [
+                'title' => 'Accessing & Downloading Your Information',
+                'icon' => 'icon-park-outline:download', 
+                'link' => route('accessing'),
+                'icon_color' => 'text-success-main',
+                'visibility' => Auth::check() && Bouncer::is(Auth::user())->an('Admin'),
+            ],
             [
                 'title' => 'Security',
                 'icon' => 'flowbite:users-group-outline',
