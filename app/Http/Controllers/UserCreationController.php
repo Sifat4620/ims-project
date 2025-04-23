@@ -37,7 +37,7 @@ class UserCreationController extends Controller
             'full_name' => 'required|string|max:255',
             'user_id' => 'required|string|max:255|unique:users,user_id',
             'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8', // Removed confirmed rule
+            'password' => 'required|string|min:8', 
             'phone' => 'nullable|string|max:15',
             'department' => 'required|string|max:255',
             'title' => 'required|exists:roles,id', 
@@ -75,6 +75,8 @@ class UserCreationController extends Controller
             'image' => $imagePath,
         ]);
 
+        $user->assignRole($request->title);
+        
         return redirect()->route('user.create')->with('success', 'User created successfully.');
     }
 
