@@ -200,6 +200,4 @@ class UploadController extends Controller
 
 
     
-
-    
 }

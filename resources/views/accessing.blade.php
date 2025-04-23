@@ -21,6 +21,11 @@
                 <p id="responseMessage" class="fw-semibold text-md text-secondary-light mb-2 my-1" style="font-size: 16px;"></p>
             </div>
 
+            <!-- Error message for invalid LCPO number -->
+            <div id="errorMessage" class="alert alert-danger text-center" style="display: none;">
+                <p id="errorText" class="mb-0"></p>
+            </div>
+
             <!-- Prompt for procurement document type (appears after clicking 'Download') -->
             <div id="procurementPrompt" class="mt-4 text-center" style="display: none;">
                 <p class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1" style="font-size: 16px;">Please choose the Procurement Document type:</p>
@@ -50,6 +55,10 @@
             const procurementPrompt = document.getElementById('procurementPrompt');
             const lcpoPrompt = document.getElementById('lcpoPrompt');
             const finalMessage = document.getElementById('finalMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide error message when switching actions
+            errorMessage.style.display = 'none';
             
             if (action === 'upgrade') {
                 responseMessage.textContent = 'You chose to upgrade information. You can now edit or update any details.';
@@ -89,9 +98,12 @@
             const lcpoNo = document.getElementById('lcpoNo').value;
             const finalMessageText = document.getElementById('finalMessageText');
             const finalMessage = document.getElementById('finalMessage');
+            const errorMessage = document.getElementById('errorMessage');
 
+            // If LCPO Number is empty or invalid
             if (lcpoNo.trim() === '') {
-                alert('Please enter a valid LCPO number.');
+                errorMessage.style.display = 'block';
+                document.getElementById('errorText').textContent = 'Please enter a valid LCPO number.';
                 return;
             }
 
@@ -107,6 +119,8 @@
         }
     </script>
 @endsection
+
+
 
 
 @section('extra-js')
