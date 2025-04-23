@@ -11,6 +11,7 @@ use Silber\Bouncer\BouncerFacade as Bouncer;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
+
 class UserCreationController extends Controller
 {
     // Show the create user form with roles data
@@ -61,9 +62,9 @@ class UserCreationController extends Controller
         if ($request->hasFile('profile_image')) {
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
         }
-
-        // Store the user data
-        User::create([
+    
+        // Create the user and store the data
+        $user = User::create([
             'full_name' => $request->full_name,
             'user_id' => $request->user_id,
             'email' => $request->email,
@@ -74,10 +75,26 @@ class UserCreationController extends Controller
             'password' => Hash::make($request->password),
             'image' => $imagePath,
         ]);
-
-        $user->assignRole($request->title);
-        
+    
+        // Query the role by ID (since title corresponds to role ID)
+        $role = DB::table('roles')->where('id', $request->title)->first();  // Query by role ID
+    
+        // If the role exists, assign it to the user
+        if ($role) {
+            $user->assignRole($role->name);  // Use the role name to assign it
+        } else {
+            dd('Role not found');  // Debugging if role is not found
+        }
+    
+        $assignedRole = DB::table('assigned_roles')
+        ->where('entity_id', $user->id)   // Use entity_id instead of user_id
+        ->first();
+    
+        // dd($assignedRole);  
+    
+        // Return success message
         return redirect()->route('user.create')->with('success', 'User created successfully.');
     }
+    
 
 }

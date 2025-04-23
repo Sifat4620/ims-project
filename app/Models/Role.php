@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Silber\Bouncer\Database\Role as BouncerRole; // Bouncer's Role
+use Silber\Bouncer\Database\Role as BouncerRole; 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Role extends BouncerRole
