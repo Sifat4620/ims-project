@@ -58,7 +58,7 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Roles</span>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Your Roles</span>
                             <h6 class="fw-semibold my-1">
                                 @foreach ($roles as $role)
                                     <span class="badge bg-primary">{{ $role->title }}</span> <!-- Displaying the role name -->
