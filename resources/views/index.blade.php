@@ -16,8 +16,9 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Current Time</span>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Current Time & Date</span>
                             <h6 class="fw-semibold my-1" id="clock">Loading...</h6> <!-- This is where the clock will be displayed -->
+                            <span class="fw-semibold text-secondary-light" id="date"></span> <!-- Date -->
                         </div>
                     </div>
                 </div>
@@ -28,22 +29,26 @@
     <script>
         function updateClock() {
             const now = new Date();
+
+            // Format time
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
-            
             const timeString = `${hours}:${minutes}:${seconds}`;
-            
-            // Update the clock's inner HTML
+
+            // Format date - e.g. "Sunday, May 18, 2025"
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString(undefined, options);
+
+            // Update elements
             document.getElementById('clock').textContent = timeString;
+            document.getElementById('date').textContent = dateString;
         }
-    
-        // Call the updateClock function every second
+
         setInterval(updateClock, 1000);
-    
-        // Call it once initially to avoid delay
         updateClock();
     </script>
+
     
 
     <!-- Roles Display Widget -->
@@ -84,7 +89,10 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Stock In</span>
+                             <a href="{{ route('logistics.instock') }}" class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1 text-decoration-none">
+                            Stock In
+                            </a>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1"></span>
                             <h6 class="fw-semibold my-1">{{ $totalStockIn }}</h6>
                         </div>
                     </div>
