@@ -167,11 +167,32 @@ class SidebarMenu
             // Admin can only
             [
                 'title' => 'Accessing & Downloading Your Information',
-                'icon' => 'icon-park-outline:download', 
-                'link' => route('accessing'),
+                'icon' => 'icon-park-outline:download',
+                'link' => 'javascript:void(0)', 
                 'icon_color' => 'text-success-main',
                 'visibility' => Auth::check() && Bouncer::is(Auth::user())->an('Admin'),
+                'submenus' => [
+                    [
+                        'name' => '', // Wrapper level
+                        'link' => 'javascript:void(0)',
+                        'subchild' => [
+                            [
+                                'name' => 'Access Information',
+                                'page_id' => 1,
+                                'link' => route('accessing'),
+                                'icon_color' => 'text-primary-600'
+                            ],
+                            [
+                                'name' => 'Upgrade Information',
+                                'page_id' => 2,
+                                'link' => route('upgrade.info'), 
+                                'icon_color' => 'text-warning-main'
+                            ]
+                        ]
+                    ]
+                ]
             ],
+
             [
                 'title' => 'Security',
                 'icon' => 'flowbite:users-group-outline',

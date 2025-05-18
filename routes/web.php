@@ -26,9 +26,7 @@ use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\DefectiveItemsReportController;
 use App\Http\Controllers\AllDocumentsController;
 use App\Http\Controllers\AccessController;
-
-
-
+use App\Http\Controllers\UpgradeInfoController;
 
 // Show the sign-in page at the root URL
 Route::get('/', [AuthController::class, 'showSignInPage'])->name('auth.signin.page');
@@ -248,6 +246,24 @@ Route::middleware('auth')->group(function () {
         // Access point start
 
           Route::get('/accessing', [App\Http\Controllers\AccessController::class, 'show'])->name('accessing');
+
+
+          
+
+          Route::get('/upgrade-info', [App\Http\Controllers\UpgradeInfoController::class, 'index'])->name('upgrade.info');
+
+            Route::post('/upgrade-info', [UpgradeInfoController::class, 'store'])->name('upgrade.info.store');
+            Route::get('/upgrade-info', [UpgradeInfoController::class, 'index'])->name('upgrade.info');
+
+            Route::post('/upgrade-info', [UpgradeInfoController::class, 'store'])->name('upgrade.info.store');
+
+            Route::get('/upgrade-info/{id}/edit', [UpgradeInfoController::class, 'edit'])->name('upgrade.info.edit');
+            Route::delete('/upgrade-info/{id}', [UpgradeInfoController::class, 'destroy'])->name('upgrade.info.destroy');
+
+            Route::put('/upgrade-info/{id}', [UpgradeInfoController::class, 'update'])->name('upgrade.info.update');
+
+
+
         // Access point end
         
 

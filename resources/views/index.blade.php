@@ -113,7 +113,10 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Stock Out</span>
+                            <a href="{{ route('logistics.deliverychallan') }}" class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1 text-decoration-none">
+                            Stock Out
+                            </a>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1"></span>
                             <h6 class="fw-semibold my-1">{{ $totalStockOut }}</h6>
                         </div>
                     </div>
@@ -134,7 +137,10 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Return Items</span>
+                            <a href="{{ route('logistics.returnable') }}" class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1 text-decoration-none">
+                            Return Items
+                            </a>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1"></span>
                             <h6 class="fw-semibold my-1">{{ $totalReturns }}</h6>
                         </div>
                     </div>
@@ -155,7 +161,10 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1">Faulty Items</span>
+                            <a href="{{ route('logistics.defective') }}" class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1 text-decoration-none">
+                            Faulty Items
+                            </a>
+                            <span class="fw-semibold fw-medium text-md text-secondary-light mb-2 my-1"></span>
                             <h6 class="fw-semibold my-1">{{ $totalDamaged }}</h6>
                         </div>
                     </div>

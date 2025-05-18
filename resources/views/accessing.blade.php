@@ -8,9 +8,9 @@
 
             <!-- Chatbot-like interface -->
             <div class="d-flex justify-content-center gap-4 mb-4">
-                <button class="btn btn-primary btn-lg" onclick="handleAction('upgrade')">
+                <a href="{{ route('upgrade.info') }}" class="btn btn-primary btn-lg">
                     Upgrade Information
-                </button>
+                </a>
                 <button class="btn btn-success btn-lg" onclick="handleAction('download')">
                     Download
                 </button>
