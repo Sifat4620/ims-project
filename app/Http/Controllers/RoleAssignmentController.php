@@ -7,19 +7,24 @@ use Illuminate\Http\Request;
 
 class RoleAssignmentController extends Controller
 {
-    // Display all users with their role(s)
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve all users along with their associated roles
-        $users = User::with('roles')->get(); // Assuming each user has one or more roles
+        $search = $request->input('search');
 
-        // Get all available roles for assignment
-        $roles = Role::all(); // You can filter roles based on your requirements
+        $usersQuery = User::with('roles');
 
-        // Set a static title
+        if ($search) {
+            $usersQuery->where('full_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+        }
+
+        $users = $usersQuery->paginate(20)->withQueryString();
+
+        $roles = \Silber\Bouncer\Database\Role::orderBy('title')->get();
+
         $title = 'Role Assignment';
 
-        // Return the view with users, roles, and title
         return view('users-grid', compact('title', 'users', 'roles'));
     }
+
 }

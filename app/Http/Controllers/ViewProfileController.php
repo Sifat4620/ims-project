@@ -2,25 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;  // Import the User model
-use App\Models\Role;  // Import the Role model
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Role;
+use Illuminate\View\View;
+use DB;
 
 class ViewProfileController extends Controller
 {
-    // Show the profile for the given user
-    public function index($userId)
+    /**
+     * Display the profile view for the specified user.
+     *
+     * @param  int  $userId
+     * @return \Illuminate\View\View
+     */
+    public function index(int $userId): View
     {
-        // Retrieve the user from the database by ID, or fail with a 404 error
-        $user = User::findOrFail($userId); // This will automatically throw a 404 error if user is not found
-        
-        // Retrieve all roles from the roles table
-        $roles = Role::all(); // You may want to adjust this to only retrieve relevant roles, or role assignments for this user
-        
-        // Set a title for the view
+        // Retrieve the user with their roles or fail with 404
+        $user = User::with('roles')->findOrFail($userId);
+        // dd($user->designation);
+
+        // Get all roles for dropdown or designation mapping
+        $roles = DB::select('SELECT * FROM roles');
+
+        // Get user's assigned roles
+        $userRoles = $user->roles;
+
+        // Get the user's primary role (first one, if any)
+        $primaryRole = $userRoles->first();
+
+        // Set page title
         $title = 'View Profile';
-        
-        // Return the 'view-profile' view, passing user data, roles, and title
-        return view('view-profile', compact('title', 'user', 'roles'));
+
+        // dd($roles);
+
+        // Return the view with all necessary data
+        return view('view-profile', compact(
+            'title',
+            'user',
+            'roles',
+            'userRoles',
+            'primaryRole'
+        ));
     }
 }

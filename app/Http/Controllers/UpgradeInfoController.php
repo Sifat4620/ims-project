@@ -41,11 +41,11 @@ class UpgradeInfoController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        // Implement storing logic here
-        // For example: validate and create a new item
-    }
+    // public function store(Request $request)
+    // {
+    //     // Implement storing logic here
+    //     // For example: validate and create a new item
+    // }
 
     public function edit($id)
     {
