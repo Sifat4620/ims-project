@@ -29,7 +29,7 @@ use App\Http\Controllers\AccessController;
 use App\Http\Controllers\UpgradeInfoController;
 use App\Http\Controllers\ConfirmInvoiceController;
 use App\Http\Controllers\InvoiceDownloadController;
-
+use App\Http\Controllers\BarcodeController;
 
 
 // Show the sign-in page at the root URL
@@ -105,11 +105,10 @@ Route::middleware('auth')->group(function () {
 
         // data entry end
 
+
+
         // Delivery challan start
 
-
-
-        
         // Route for Product List
         Route::get('/logistics/invoice-list', [App\Http\Controllers\InvoiceListController::class, 'index'])
         ->name('logistics.invoicelist');
@@ -185,7 +184,6 @@ Route::middleware('auth')->group(function () {
 
         });
 
-                // Laravel Route Definition
         Route::post('/logistics/return-status-log/update-item-status', [App\Http\Controllers\ReturnStatusLogController::class, 'updateItemStatus'])->name('logistics.returnstatuslog.updateItemStatus');
 
         // Challan Management Return End
@@ -201,11 +199,6 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/defective-items-report', [DefectiveItemsReportController::class, 'defectiveProductsReport'])->name('defectiveitems');
- 
-
-      
-
-
         
         // Route::get('/product-warranty-overview', [WarrantyReportController::class, 'productWarrantyOverview'])->name('productwarranty');
         // Route::get('/revenue-summary', [RevenueReportController::class, 'revenueSummary'])->name('revenuesummary');
@@ -255,10 +248,6 @@ Route::middleware('auth')->group(function () {
         // Access point start
 
           Route::get('/accessing', [App\Http\Controllers\AccessController::class, 'show'])->name('accessing');
-
-
-          
-
           Route::get('/upgrade-info', [App\Http\Controllers\UpgradeInfoController::class, 'index'])->name('upgrade.info');
 
             Route::post('/upgrade-info', [UpgradeInfoController::class, 'store'])->name('upgrade.info.store');
@@ -271,9 +260,17 @@ Route::middleware('auth')->group(function () {
 
             Route::put('/upgrade-info/{id}', [UpgradeInfoController::class, 'update'])->name('upgrade.info.update');
 
-
-
         // Access point end
+
+
+
+
+
+        // Barcode start 
+            Route::get('/barcode', [BarcodeController::class, 'index'])->name('barcode.index');
+
+            Route::get('/barcode/download', [BarcodeController::class, 'download'])->name('barcode.download');
+        // Barcode end  
         
 
 

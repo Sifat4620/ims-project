@@ -71,6 +71,42 @@ class SidebarMenu
                    
                 ),
             ],
+
+
+            // Barcode Section : Inventory Manager, Inventory Entry, Sales, Director
+            [
+                'title' => 'Barcode',
+                'icon' => 'mdi:barcode',
+                'link' => 'javascript:void(0)',
+                'submenus' => [
+                    [
+                        'name' => '',
+                        'link' => 'javascript:void(0)', 
+                        'subchild' => [
+                            [
+                                'name' => 'Product List with Barcodes',
+                                'page_id' => 19, 
+                                'link' => route('barcode.index'),  
+                                'icon_color' => 'text-primary-600'
+                            ],
+                            // [
+                            //     'name' => 'Download Barcode',
+                            //     'page_id' => 20, 
+                            //     'link' => route('barcode.download'), 
+                            //     'icon_color' => 'text-success-600'
+                            // ],
+                        ],
+                    ],
+                ],
+                'icon_color' => 'text-purple-600',
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
+                    Bouncer::is(Auth::user())->an('Inventory Entry') || 
+                    Bouncer::is(Auth::user())->an('Admin')
+                ),
+            ],
+
+
             
             // All 
             [
@@ -166,7 +202,7 @@ class SidebarMenu
 
             // Admin can only
             [
-                'title' => 'Procurement Document & Product Modification',
+                'title' => 'Download Document & Product Modification',
                 'icon' => 'icon-park-outline:download',
                 'link' => 'javascript:void(0)', 
                 'icon_color' => 'text-success-main',
