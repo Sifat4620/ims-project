@@ -20,6 +20,6 @@ class DeliveryChallanController extends Controller
         });
 
         // Pass the grouped invoices to the view
-        return view('delivery_challan_data', compact('title', 'groupedInvoices'));
+        return view('delivery-challan-data.delivery-challan-data', compact('title', 'groupedInvoices'));
     }
 }

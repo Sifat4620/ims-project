@@ -52,7 +52,7 @@ class DefectiveItemsReportController extends Controller
             ]);
 
             // Return the view with paginated data
-            return view('defective_report', [
+            return view('defective-report.defective-report', [
                 'title' => 'Defective Products Report',
                 'paginatedItems' => $paginatedItems,
             ]);

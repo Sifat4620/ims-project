@@ -166,7 +166,7 @@ class SidebarMenu
 
             // Admin can only
             [
-                'title' => 'Accessing & Downloading Your Information',
+                'title' => 'Procurement Document & Product Modification',
                 'icon' => 'icon-park-outline:download',
                 'link' => 'javascript:void(0)', 
                 'icon_color' => 'text-success-main',
@@ -177,13 +177,13 @@ class SidebarMenu
                         'link' => 'javascript:void(0)',
                         'subchild' => [
                             [
-                                'name' => 'Access Information',
+                                'name' => 'Download Procurement Document',
                                 'page_id' => 1,
                                 'link' => route('accessing'),
                                 'icon_color' => 'text-primary-600'
                             ],
                             [
-                                'name' => 'Upgrade Information',
+                                'name' => 'Modify Product Information',
                                 'page_id' => 2,
                                 'link' => route('upgrade.info'), 
                                 'icon_color' => 'text-warning-main'
@@ -194,7 +194,7 @@ class SidebarMenu
             ],
 
             [
-                'title' => 'Security',
+                'title' => 'User Management',
                 'icon' => 'flowbite:users-group-outline',
                 'link' => 'javascript:void(0)',
                 'submenus' => [

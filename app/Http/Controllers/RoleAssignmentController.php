@@ -24,7 +24,7 @@ class RoleAssignmentController extends Controller
 
         $title = 'Role Assignment';
 
-        return view('users-grid', compact('title', 'users', 'roles'));
+        return view('users-grid.users-grid', compact('title', 'users', 'roles'));
     }
 
 }

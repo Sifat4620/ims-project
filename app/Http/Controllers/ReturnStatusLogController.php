@@ -88,7 +88,7 @@ class ReturnStatusLogController extends Controller
                     }
                     
                     // Return the view with the grouped data
-                    return view('item_return_log', compact('title', 'sections', 'search'));
+                    return view('item-return-log.item-return-log', compact('title', 'sections', 'search'));
                     
     }
 

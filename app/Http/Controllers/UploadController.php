@@ -12,13 +12,13 @@ class UploadController extends Controller
     public function localFileUpload()
     {
         $title = 'Local File Upload';
-        return view('local_file_upload', compact('title'));
+        return view('local-file-upload.local-file-upload', compact('title'));
     }
 
     public function importFileUpload()
     {
         $title = 'Import File Upload';
-        return view('import_file_upload', compact('title'));
+        return view('import-file-upload.import-file-upload', compact('title'));
     }
 
     //local section

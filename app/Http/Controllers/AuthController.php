@@ -12,7 +12,7 @@ class AuthController extends Controller
     // Show sign-in page
     public function showSignInPage()
     {
-        return view('sign-in');
+        return view('sign-in.sign-in');
     }
 
     // Handle the sign-in form submission

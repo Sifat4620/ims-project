@@ -4,10 +4,12 @@
         <!-- Buttons -->
         <div class="card-header">
             <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-                <a href="javascript:void(0)" class="btn btn-sm btn-primary-600 radius-8 d-inline-flex align-items-center gap-1">
-                    <iconify-icon icon="pepicons-pencil:paper-plane" class="text-xl"></iconify-icon>
-                    Send Invoice
-                </a>                
+                <a href="https://wa.me/?text=Please%20find%20the%20Delivery%20Challan%20attached."
+                    target="_blank"
+                    class="btn btn-sm btn-success radius-8 d-inline-flex align-items-center gap-1">
+                        <iconify-icon icon="ic:baseline-whatsapp" class="text-xl"></iconify-icon>
+                        Send via WhatsApp
+                </a>              
                 <button type="button" class="btn btn-sm btn-danger radius-8 d-inline-flex align-items-center gap-1" onclick="printInvoice()">
                     <iconify-icon icon="basil:printer-outline" class="text-xl"></iconify-icon>
                     Print

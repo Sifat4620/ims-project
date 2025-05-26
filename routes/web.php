@@ -27,6 +27,10 @@ use App\Http\Controllers\DefectiveItemsReportController;
 use App\Http\Controllers\AllDocumentsController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\UpgradeInfoController;
+use App\Http\Controllers\ConfirmInvoiceController;
+use App\Http\Controllers\InvoiceDownloadController;
+
+
 
 // Show the sign-in page at the root URL
 Route::get('/', [AuthController::class, 'showSignInPage'])->name('auth.signin.page');
@@ -106,22 +110,22 @@ Route::middleware('auth')->group(function () {
 
 
         
-        // Route for Invoice List
+        // Route for Product List
         Route::get('/logistics/invoice-list', [App\Http\Controllers\InvoiceListController::class, 'index'])
         ->name('logistics.invoicelist');
 
-        // Route for Confirm Invoice (GET - Display Confirmation Page)
+        // Route for Confirm Challan (GET - Display Confirmation Page)
         Route::get('/logistics/invoice-confirm', [App\Http\Controllers\ConfirmInvoiceController::class, 'index'])
             ->name('logistics.invoiceconfirm');
 
-        // Route for Confirm Invoice (POST - Process Selected Items)
+        // Route for Confirm Challan (POST - Process Selected Items)
         Route::post('/logistics/invoice-confirm', [App\Http\Controllers\ConfirmInvoiceController::class, 'store'])
             ->name('logistics.invoiceconfirm.store');
 
 
         Route::get('/logistics/invoice-list', [App\Http\Controllers\InvoiceListController::class, 'index'])->name('logistics.invoicelist');
 
-        // Route for Confirm Invoice
+        // Route for Confirm Challan
         Route::post('/logistics/invoice-confirm', [App\Http\Controllers\ConfirmInvoiceController::class, 'store'])->name('logistics.invoiceconfirm');
 
        // Route for displaying the invoice confirmation form
@@ -142,8 +146,13 @@ Route::middleware('auth')->group(function () {
         // Route for Invoice Download
         Route::get('/logistics/invoice-download', [App\Http\Controllers\InvoiceDownloadController::class, 'index'])->name('logistics.invoicedownload');
 
+        // Download using DomPDF\Facade\Pdf
+        Route::get('/delivery-challan/pdf', [InvoiceDownloadController::class, 'downloadPdf'])->name('delivery-challan.pdf');
+
+
         // Route for handling form submission
         Route::post('/logistics/invoice-download', [App\Http\Controllers\InvoiceDownloadController::class, 'store'])->name('logistics.invoicedownload');
+        
 
         // Route for Edit Invoice
         Route::get('/logistics/invoice-edit', [App\Http\Controllers\EditInvoiceController::class, 'index'])->name('logistics.invoiceedit');

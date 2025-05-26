@@ -28,7 +28,7 @@ class CreatePagesTable extends Migration
             ['page_name' => 'Defective', 'created_at' => now(), 'updated_at' => now()],
             ['page_name' => 'Warranty Log', 'created_at' => now(), 'updated_at' => now()],
             ['page_name' => 'Core Data', 'created_at' => now(), 'updated_at' => now()],
-            ['page_name' => 'Invoice List', 'created_at' => now(), 'updated_at' => now()],
+            ['page_name' => 'Product List', 'created_at' => now(), 'updated_at' => now()],
             ['page_name' => 'Confirm', 'created_at' => now(), 'updated_at' => now()],
             ['page_name' => 'Invoice Download', 'created_at' => now(), 'updated_at' => now()],
             ['page_name' => 'Edit', 'created_at' => now(), 'updated_at' => now()],

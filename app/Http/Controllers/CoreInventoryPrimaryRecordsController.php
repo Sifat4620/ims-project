@@ -11,7 +11,7 @@ class CoreInventoryPrimaryRecordsController extends Controller
     public function primaryRecords()
     {
         $title = 'Primary Records';
-        return view('master_item_input', compact('title'));
+        return view('master-item-input.master-item-input', compact('title'));
     }
 
     // Method to fetch and display products

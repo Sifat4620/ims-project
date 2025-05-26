@@ -13,6 +13,6 @@ class InStockController extends Controller
         $items = Item::all();  // Get all items from the 'items' table
 
         $title = 'In Stock';
-        return view('item_received_data', compact('title', 'items'));
+        return view('item-received-data.item-received-data', compact('title', 'items'));
     }
 }

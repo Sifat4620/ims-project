@@ -29,7 +29,7 @@ class AccessController extends Controller
             $documents = UploadDocument::where('lcpo_no', $lcpoNo)->get();
         }
 
-        return view('accessing', compact('title', 'documents'));
+        return view('accessing.accessing', compact('title', 'documents'));
     }
 
     /**

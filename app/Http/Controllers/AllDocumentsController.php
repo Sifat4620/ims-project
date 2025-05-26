@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UploadDocument; // Use the UploadDocument model
+use App\Models\UploadDocument; 
 use Illuminate\Http\Request;
 
 class AllDocumentsController extends Controller
@@ -23,7 +23,7 @@ class AllDocumentsController extends Controller
     
         $title = 'All Documents';
     
-        return view('alldocuments', compact('title', 'documents', 'perPage', 'searchField', 'search'));
+        return view('alldocuments.alldocuments', compact('title', 'documents', 'perPage', 'searchField', 'search'));
     }
     
 }

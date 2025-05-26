@@ -30,6 +30,6 @@ class UserListController extends Controller
         // Pass data to the view
         $title = 'User List';
 
-        return view('users-list', compact('title', 'users', 'perPage', 'search'));
+        return view('users-list.users-list', compact('title', 'users', 'perPage', 'search'));
     }
 }

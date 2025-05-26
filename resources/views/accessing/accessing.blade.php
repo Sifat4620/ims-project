@@ -9,10 +9,10 @@
             <!-- Chatbot-like interface -->
             <div class="d-flex justify-content-center gap-4 mb-4">
                 <a href="{{ route('upgrade.info') }}" class="btn btn-primary btn-lg">
-                    Upgrade Information
+                    Modify Product Information
                 </a>
                 <button class="btn btn-success btn-lg" onclick="handleAction('download')">
-                    Download
+                    Download Procurement Documents
                 </button>
             </div>
 

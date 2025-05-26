@@ -36,7 +36,7 @@ class ViewProfileController extends Controller
         // dd($roles);
 
         // Return the view with all necessary data
-        return view('view-profile', compact(
+        return view('view-profile.view-profile', compact(
             'title',
             'user',
             'roles',

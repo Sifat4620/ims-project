@@ -26,7 +26,7 @@ class UserCreationController extends Controller
         // dd($roles);  // This will dump the roles before returning the view
     
         // Return the 'add-user' view with title and roles
-        return view('add-user', compact('title', 'roles'));
+        return view('add-user.add-user', compact('title', 'roles'));
     }
     
 

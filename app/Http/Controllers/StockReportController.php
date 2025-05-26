@@ -53,7 +53,7 @@ class StockReportController extends Controller
         );
 
         // Pass data to the view
-        return view('stock_report', compact('title', 'paginatedItems'));
+        return view('stock-report.stock-report', compact('title', 'paginatedItems'));
     }
 
     
@@ -108,7 +108,7 @@ class StockReportController extends Controller
         $paginatedItems = $this->paginate($items, $perPage, $request);
 
         // Pass data to the view
-        return view('po_stock_report', compact('title', 'paginatedItems'));
+        return view('po-stock-report.po-stock-report', compact('title', 'paginatedItems'));
     }
 
 
@@ -177,7 +177,7 @@ class StockReportController extends Controller
         );
 
         // Pass data to the view
-        return view('lc_stock_report', compact('title', 'paginatedItems'));
+        return view('lc-stock-report.lc-stock-report', compact('title', 'paginatedItems'));
     }
 
 }

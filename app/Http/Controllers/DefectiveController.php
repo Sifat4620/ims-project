@@ -20,6 +20,6 @@ class DefectiveController extends Controller
         $defectiveItems = FaultyItem::with('item:id,brand,category')->get();
 
         // Pass the data to the view
-        return view('defective-data', compact('title', 'defectiveItems'));
+        return view('defective-data.defective-data', compact('title', 'defectiveItems'));
     }
 }

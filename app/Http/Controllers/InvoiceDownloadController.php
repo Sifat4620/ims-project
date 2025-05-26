@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class InvoiceDownloadController extends Controller
 {
@@ -12,8 +14,8 @@ class InvoiceDownloadController extends Controller
      */
     public function index()
     {
-        $title = 'Download Invoice';
-        return view('invoice-preview', compact('title'));
+        $title = 'Download Challan';
+        return view('challan-preview.challan-preview', compact('title'));
     }
 
     /**
@@ -62,7 +64,7 @@ class InvoiceDownloadController extends Controller
     protected function prepareInvoiceData(Request $request, $selectedItems)
     {
         return [
-            'title' => 'Download Invoice',
+            'title' => 'Download Challan',
             'invoice_number' => $request->input('invoice_number'),
             'selected_items' => $selectedItems,
             'customer_address' => $request->input('customer_address'),
@@ -107,4 +109,59 @@ class InvoiceDownloadController extends Controller
             }
         }
     }
+
+
+
+
+    public function downloadPdf(Request $request)
+    {
+        $invoiceNumber = trim((string) $request->input('invoice_number'));
+
+        $invalidValues = ['', 'null', 'n/a', 'undefined'];
+
+        if (in_array(strtolower($invoiceNumber), $invalidValues, true)) {
+            // Generate random invoice number starting with ZXY + random 6 digits
+            $invoiceNumber = 'ZXY' . random_int(100000, 999999);
+        }
+
+        // Now fetch invoice records for this invoice number
+        $invoiceRecords = \DB::table('invoices')
+                            ->where('invoice_number', $invoiceNumber)
+                            ->get();
+
+        if ($invoiceRecords->isEmpty()) {
+            abort(404, 'Invoice not found.');
+        }
+
+        // Extract first record for invoice info
+        $firstRecord = $invoiceRecords->first();
+
+        // Group items for PDF data
+        $groupedItems = $invoiceRecords->groupBy(function ($item) {
+            return $item->category . '|' . $item->brand . '|' . $item->model_no . '|' . $item->specification;
+        });
+
+        $data = [
+            'invoice_number' => $invoiceNumber,
+            'customer_address' => $firstRecord->customer_address,
+            'date_issued' => $firstRecord->date_issued ? \Carbon\Carbon::parse($firstRecord->date_issued)->format('d M Y') : now()->format('d M Y'),
+            'po_number' => $firstRecord->po_number ?? '',
+            'po_date' => $firstRecord->po_date ?? '',
+            'auth_name' => $firstRecord->authorized_name,
+            'auth_designation' => $firstRecord->authorized_designation,
+            'auth_mobile' => $firstRecord->authorized_mobile,
+            'rec_name' => $firstRecord->recipient_name,
+            'rec_designation' => $firstRecord->recipient_designation,
+            'rec_organization' => $firstRecord->recipient_organization,
+            'selected_items' => $groupedItems,
+        ];
+
+        $pdf = Pdf::loadView('pdf.delivery-challan', $data);
+
+        $fileName = "delivery-challan-{$invoiceNumber}.pdf";
+
+        return $pdf->download($fileName);
+    }
+
+
 }

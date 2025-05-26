@@ -14,6 +14,6 @@ class CoreDataController extends Controller
 
         // Pass the products and title to the view
         $title = 'Core Data';
-        return view('master_product_data', compact('title', 'products'));
+        return view('master-product-data.master-product-data', compact('title', 'products'));
     }
 }

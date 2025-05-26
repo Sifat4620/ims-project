@@ -21,11 +21,11 @@ class ConfirmInvoiceController extends Controller
     // Display the confirmation page
     public function index()
     {
-        $title = 'Confirm Invoice';
-        return view('invoice-add', compact('title'));
+        $title = 'Confirm Challan';
+        return view('product-add.product-add', compact('title'));
     }
 
-    // Handle the POST request to confirm invoices
+    // Handle the POST request to Confirm Challans
     public function store(Request $request)
     {
         // Validate the request to ensure 'selected_items' is an array
@@ -45,7 +45,7 @@ class ConfirmInvoiceController extends Controller
         session(['invoiceNumber' => $this->invoiceNumber]);
 
         // Pass the necessary data to the view
-        $title = 'Confirm Invoice';
+        $title = 'Confirm Challan';
         return view('invoice-add', [
             'selectedItems' => $selectedItems,
             'title' => $title,

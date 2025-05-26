@@ -20,6 +20,6 @@ class ReturnableController extends Controller
         $returns = Returns::with('item:id,brand,category')->get();
 
         // Pass the data to the view
-        return view('returnable', compact('title', 'returns'));
+        return view('returnable.returnable', compact('title', 'returns'));
     }
 }

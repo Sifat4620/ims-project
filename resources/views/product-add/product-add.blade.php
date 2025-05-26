@@ -8,7 +8,7 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
                     <button type="submit" class="btn btn-sm btn-primary-600 radius-8 d-inline-flex align-items-center gap-1">
                         <iconify-icon icon="simple-line-icons:check" class="text-xl"></iconify-icon>
-                        Save
+                        Generate challan
                     </button>
                 </div>
             </div>

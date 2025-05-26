@@ -24,7 +24,7 @@ class DataEntryController extends Controller
 
        // Return the view with data
        $title = 'Data Entry';
-       return view('item_input', compact('title', 'lcpoTypes', 'categories', 'brands'));
+       return view('item-input.item-input', compact('title', 'lcpoTypes', 'categories', 'brands'));
    }
 
    // Handle AJAX request to fetch brands based on selected category

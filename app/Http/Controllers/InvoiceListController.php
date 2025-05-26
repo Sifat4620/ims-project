@@ -8,7 +8,7 @@ use App\Models\Item;
 class InvoiceListController extends Controller
 {
     /**
-     * Display the invoice list with search, filters, and specifically shows items with status "No" indicating non-availability.
+     * Display the Product List with search, filters, and specifically shows items with status "No" indicating non-availability.
      */
     public function index(Request $request)
     {
@@ -47,8 +47,8 @@ class InvoiceListController extends Controller
         $items = $query->paginate($perPage)->withQueryString();
 
         // Pass data to the view
-        return view('invoice-list', [
-            'title' => 'Invoice List',
+        return view('product-list.product-list', [
+            'title' => 'Product List',
             'items' => $items,
             'search' => $searchQuery,
             'searchField' => $searchField,

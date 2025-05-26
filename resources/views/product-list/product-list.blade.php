@@ -59,7 +59,7 @@
 
                     <!-- Create Invoice Button -->
                     <button type="submit" class="btn btn-sm btn-primary-600" form="invoiceForm">
-                        <i class="ri-add-line"></i> Create Invoice
+                        <i class="ri-add-line"></i> Create Challan
                     </button>
                 </div>
             </div>

@@ -53,7 +53,7 @@
                     <!-- Serial No in Full Row -->
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label for="serial-input" class="form-label">Serial No(s)</label>
+                            <label for="serial-input" class="form-label">OEM Serial No(s)</label>
                             <textarea id="serial-input" class="form-control" name="serial_no" rows="1" placeholder="Enter serial numbers, separated by commas or line breaks"></textarea>
                         </div>
                     </div>

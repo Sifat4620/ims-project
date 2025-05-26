@@ -31,7 +31,7 @@ class UpgradeInfoController extends Controller
 
         $items = $query->paginate($perPage)->withQueryString();
 
-        return view('upgrade-info', [
+        return view('upgrade-info.upgrade-info', [
             'title' => $title,
             'items' => $items,
             'perPage' => $perPage,
@@ -52,7 +52,7 @@ class UpgradeInfoController extends Controller
         $item = Item::findOrFail($id);
         $title = 'Edit Upgrade Item';  // page title
 
-        return view('upgrade-info-edit', compact('item', 'title'));
+        return view('upgrade-info-edit.upgrade-info-edit', compact('item', 'title'));
     }
 
   
