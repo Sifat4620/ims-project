@@ -268,8 +268,11 @@ Route::middleware('auth')->group(function () {
 
         // Barcode start 
             Route::get('/barcode', [BarcodeController::class, 'index'])->name('barcode.index');
-
+            Route::post('/barcode/generate/{item}', [BarcodeController::class, 'generate'])->name('barcode.generate');
+            Route::post('barcodes/{id}/generate', [BarcodeController::class, 'generate']);
             Route::get('/barcode/download', [BarcodeController::class, 'download'])->name('barcode.download');
+            Route::match(['get', 'post'], 'barcodes/{id}/generate', [BarcodeController::class, 'generate']);
+
         // Barcode end  
         
 

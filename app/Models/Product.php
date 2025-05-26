@@ -9,6 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'product_id'; 
+    public $incrementing = true;
+    protected $keyType = 'int'; 
+
     // Define the fields that are mass assignable
     protected $fillable = [
         'product_id',

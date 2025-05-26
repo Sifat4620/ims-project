@@ -68,6 +68,18 @@ class Item extends Model
      */
 
 
+     public function itemBarcode()
+    {
+        return $this->hasMany(ItemBarcode::class);
+    }
+
+    public function product()
+    {
+         return $this->belongsTo(Product::class, 'product_id', 'product_id');
+    }
+
+
+
      protected static function booted()
      {
          static::updated(function ($item) {

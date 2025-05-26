@@ -12,6 +12,7 @@ class CreateItemBarcodesTable extends Migration
             $table->id();
             $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->string('barcode_string', 255);
             $table->timestamp('downloaded_at')->useCurrent();
             $table->timestamps(); 
         });

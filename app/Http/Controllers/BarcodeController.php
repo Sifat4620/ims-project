@@ -2,60 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;  
 use Illuminate\Http\Request;
 use App\Models\Item;
+use App\Models\ItemBarcode;
+use Milon\Barcode\Facades\DNS1DFacade as Barcode;
+use Carbon\Carbon;
+use App\Models\Product;
 
 
 class BarcodeController extends Controller
 {
-    // Show all products with option to generate/create barcode
+    /**
+     * Display paginated list of items with search and filters.
+     */
     public function index(Request $request)
     {
         $perPage = $request->get('perPage', 10);
         $search = $request->get('search', '');
         $searchField = $request->get('search_field', 'all');
-        $issueStatus = $request->get('issue_status', 'No');  // Default to 'No'
+        $issueStatus = $request->get('issue_status', '');
 
         $query = Item::query();
 
-        // Apply issue status filter
         if ($issueStatus !== '') {
             $query->where('status', $issueStatus);
         }
 
-        // Apply search logic
         if ($search) {
             $query->where(function ($q) use ($search, $searchField) {
                 if ($searchField === 'all') {
                     $q->where('lc_po_type', 'like', "%{$search}%")
-                    ->orWhere('brand', 'like', "%{$search}%")
-                    ->orWhere('category', 'like', "%{$search}%")
-                    ->orWhere('model_no', 'like', "%{$search}%")
-                    ->orWhere('serial_no', 'like', "%{$search}%");
+                      ->orWhere('brand', 'like', "%{$search}%")
+                      ->orWhere('category', 'like', "%{$search}%")
+                      ->orWhere('model_no', 'like', "%{$search}%")
+                      ->orWhere('serial_no', 'like', "%{$search}%");
                 } else {
                     $q->where($searchField, 'like', "%{$search}%");
                 }
             });
         }
 
-        // Paginate results with query string parameters kept
-        $items = $query->paginate($perPage)->withQueryString();
+        $items = $query->with('itemBarcode')->paginate($perPage)->withQueryString();
 
-        $title = 'Item List - Create Barcodes';
+        $title = 'Item Barcode Generator';
 
-        // Pass all variables to your Blade view
         return view('barcode.product-barcode-index', compact('title', 'items', 'search', 'searchField', 'perPage', 'issueStatus'));
     }
 
+    /**
+     * Generate barcode for a specific item.
+     * Creates or updates the barcode record.
+     */
+    public function generate($itemId)
+{
+    $item = Item::findOrFail($itemId);
+
+    $serialNo = $item->serial_no;
+    $year = now()->format('Y');
+    $reversed = strrev($year);
+    $prefix = substr($reversed, 0, 2);
+
+    $brand = $item->brand;
+    $category = $item->category;
+
+    $product = Product::where('product_brand', $brand)
+                      ->where('category', $category)
+                      ->first();
+
+    $productIdFromProductsTable = $product ? $product->product_id : null;
+
+    $barcodeString = 'P' . $prefix . '-S' . $serialNo;
+
+    $barcodeSVG = Barcode::getBarcodeSVG($barcodeString, 'C128', 2, 60);
+
+    return view('barcode.show', [
+        'barcodeSVG' => $barcodeSVG,
+        'barcodeString' => $barcodeString,
+        'productId' => $productIdFromProductsTable,
+        'itemId' => $item->id,
+    ]);
+}
 
 
-    // Show list for barcode download (could be the same or different)
-    public function download()
+
+
+    /**
+     * Download the barcode PNG image for a given item.
+     */
+    public function download($id)
     {
-        $products = Product::paginate(10);
-        $title = 'All Products List with Barcodes to Download';
+        $barcode = ItemBarcode::where('item_id', $id)->firstOrFail();
 
-        return view('barcode.product-barcode-download', compact('title', 'products'));
+        // Generate barcode PNG base64 string
+        $barcodePngBase64 = Barcode::getBarcodePNG($barcode->barcode_string, 'C128', 2, 80);
+
+        $barcodeImage = base64_decode($barcodePngBase64);
+
+        return response($barcodeImage)
+            ->header('Content-Type', 'image/png')
+            ->header('Content-Disposition', 'attachment; filename="barcode_' . $barcode->item_id . '.png"');
     }
 }
