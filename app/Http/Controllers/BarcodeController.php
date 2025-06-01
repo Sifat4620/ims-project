@@ -54,34 +54,49 @@ class BarcodeController extends Controller
      * Creates or updates the barcode record.
      */
     public function generate($itemId)
-{
-    $item = Item::findOrFail($itemId);
+    {
+        $item = Item::findOrFail($itemId);
 
-    $serialNo = $item->serial_no;
-    $year = now()->format('Y');
-    $reversed = strrev($year);
-    $prefix = substr($reversed, 0, 2);
+        // Step 1: Get original serial number
+        $originalSerial = $item->serial_no;
 
-    $brand = $item->brand;
-    $category = $item->category;
+        // Step 2: Generate a new random serial number (6 digits)
+        $randomSerial = mt_rand(100000, 999999);
 
-    $product = Product::where('product_brand', $brand)
-                      ->where('category', $category)
-                      ->first();
+        // Step 3: Get brand and category from item
+        $brand = $item->brand;
+        $category = $item->category;
 
-    $productIdFromProductsTable = $product ? $product->product_id : null;
+        // Step 4: Find product to get product_id
+        $product = Product::where('product_brand', $brand)
+                        ->where('category', $category)
+                        ->first();
 
-    $barcodeString = 'P' . $prefix . '-S' . $serialNo;
+        $productIdFromProductsTable = $product ? $product->product_id : null;
 
-    $barcodeSVG = Barcode::getBarcodeSVG($barcodeString, 'C128', 2, 60);
+        // Step 5: Create the year-based prefix
+        $year = now()->format('Y');        // e.g., 2025
+        $reversed = strrev($year);         // "5202"
+        $prefix = substr($reversed, 0, 2); // "52"
 
-    return view('barcode.show', [
-        'barcodeSVG' => $barcodeSVG,
-        'barcodeString' => $barcodeString,
-        'productId' => $productIdFromProductsTable,
-        'itemId' => $item->id,
-    ]);
-}
+        // Step 6: Build barcode string with product ID before prefix
+        $barcodeString = $productIdFromProductsTable . $prefix . $randomSerial;
+
+        // Step 7: Original barcode string with product ID and original serial
+        $originalBarcodeString = $productIdFromProductsTable . $prefix . $originalSerial;
+
+        // Step 8: Generate barcode SVG
+        $barcodeSVG = Barcode::getBarcodeSVG($barcodeString, 'C128', 2, 60);
+
+        return view('barcode.show', [
+            'barcodeSVG' => $barcodeSVG,
+            'barcodeString' => $barcodeString,
+            'originalBarcodeString' => $originalBarcodeString,
+            'productId' => $productIdFromProductsTable,
+            'itemId' => $item->id,
+        ]);
+    }
+
 
 
 
