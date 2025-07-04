@@ -99,8 +99,6 @@ class BarcodeController extends Controller
 
 
 
-
-
     /**
      * Download the barcode PNG image for a given item.
      */

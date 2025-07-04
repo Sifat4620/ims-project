@@ -75,7 +75,7 @@ class SidebarMenu
 
             // Barcode Section : Inventory Manager, Inventory Entry, Sales, Director
             [
-                'title' => 'Barcode',
+                'title' => 'Scanning Section',
                 'icon' => 'mdi:barcode',
                 'link' => 'javascript:void(0)',
                 'submenus' => [
