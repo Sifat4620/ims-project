@@ -270,8 +270,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/barcode', [BarcodeController::class, 'index'])->name('barcode.index');
             Route::post('/barcode/generate/{item}', [BarcodeController::class, 'generate'])->name('barcode.generate');
             Route::post('barcodes/{id}/generate', [BarcodeController::class, 'generate']);
-            Route::get('/barcode/download', [BarcodeController::class, 'download'])->name('barcode.download');
+            Route::get('/barcode/download/{id}', [BarcodeController::class, 'download'])->name('barcode.download');
             Route::match(['get', 'post'], 'barcodes/{id}/generate', [BarcodeController::class, 'generate']);
+
+
+            Route::get('/barcode/double-check', [BarcodeController::class, 'doubleCheck'])->name('barcode.double-check');
+            Route::get('/barcode/ajax-check', [BarcodeController::class, 'ajaxDoubleCheck'])->name('barcode.ajax-check');
+
 
         // Barcode end  
         

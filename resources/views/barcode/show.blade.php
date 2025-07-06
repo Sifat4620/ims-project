@@ -5,13 +5,16 @@
     <title>Barcode Display</title>
 </head>
 <body>
-    <h1>Barcode for Item #{{ $itemId }}</h1>
+    <h1>Barcode for Item #{{ $item->id }}</h1>
 
-    <div>
-        {!! $barcodeSVG !!}
-    </div>
+    <h3>Generated Barcode (Random Serial):</h3>
+    <div>{!! $generatedBarcodeSVG !!}</div>
+    <p><strong>Barcode String:</strong> {{ $generatedBarcodeString }}</p>
 
-    <p><strong>Generated Barcode String:</strong> {{ $barcodeString }}</p>
-    <p><strong>Original Barcode String:</strong> {{ $originalBarcodeString }}</p>
+    <hr>
+
+    <h3>Original Barcode (Original Serial):</h3>
+    <div>{!! $originalBarcodeSVG !!}</div>
+    <p><strong>Barcode String:</strong> {{ $originalBarcodeString }}</p>
 </body>
 </html>

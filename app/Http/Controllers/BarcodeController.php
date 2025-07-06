@@ -6,18 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\ItemBarcode;
 use Milon\Barcode\Facades\DNS1DFacade as Barcode;
-use Carbon\Carbon;
 use App\Models\Product;
-
 
 class BarcodeController extends Controller
 {
     /**
-     * Display paginated list of items with search and filters.
+     * Display paginated list of items with optional search and filters.
      */
     public function index(Request $request)
     {
-        $perPage = $request->get('perPage', 10);
+        $perPage = (int) $request->get('perPage', 10);
         $search = $request->get('search', '');
         $searchField = $request->get('search_field', 'all');
         $issueStatus = $request->get('issue_status', '');
@@ -50,69 +48,135 @@ class BarcodeController extends Controller
     }
 
     /**
-     * Generate barcode for a specific item.
-     * Creates or updates the barcode record.
+     * Generate or update barcode for a specific item.
+     * 
+     * @param int $itemId
+     * @return \Illuminate\View\View
      */
-    public function generate($itemId)
+   public function generate($itemId)
     {
+        // Find the item by ID or fail with 404
         $item = Item::findOrFail($itemId);
 
-        // Step 1: Get original serial number
-        $originalSerial = $item->serial_no;
+        // Extract numeric part of serial_no (remove any non-digit chars)
+        $originalSerial = preg_replace('/\D/', '', $item->serial_no);
 
-        // Step 2: Generate a new random serial number (6 digits)
-        $randomSerial = mt_rand(100000, 999999);
+        if (empty($originalSerial)) {
+            return back()->with('error', 'Invalid serial number for barcode generation.');
+        }
 
-        // Step 3: Get brand and category from item
-        $brand = $item->brand;
-        $category = $item->category;
+        // Generate a zero-padded random 6-digit serial string
+        $randomSerial = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Step 4: Find product to get product_id
-        $product = Product::where('product_brand', $brand)
-                        ->where('category', $category)
-                        ->first();
+        // Fetch product matching the item's brand and category
+        $product = Product::where('product_brand', $item->brand)
+            ->where('category', $item->category)
+            ->first();
 
-        $productIdFromProductsTable = $product ? $product->product_id : null;
+        if (!$product) {
+            return back()->with('error', 'No matching product found for this item.');
+        }
 
-        // Step 5: Create the year-based prefix
-        $year = now()->format('Y');        // e.g., 2025
-        $reversed = strrev($year);         // "5202"
-        $prefix = substr($reversed, 0, 2); // "52"
+        // Use product_id (varchar) as product code for barcode prefix
+        $productCode = $product->product_id;
 
-        // Step 6: Build barcode string with product ID before prefix
-        $barcodeString = $productIdFromProductsTable . $prefix . $randomSerial;
+        // Create a prefix using the first two digits of the reversed current year
+        $prefix = substr(strrev(now()->format('Y')), 0, 2);
 
-        // Step 7: Original barcode string with product ID and original serial
-        $originalBarcodeString = $productIdFromProductsTable . $prefix . $originalSerial;
+        // Construct the barcode string: product code + prefix + random serial
+        $barcodeString = $productCode . $prefix . $randomSerial;
 
-        // Step 8: Generate barcode SVG
-        $barcodeSVG = Barcode::getBarcodeSVG($barcodeString, 'C128', 2, 60);
+        // Store or update the barcode for this item
+        \App\Models\ItemBarcode::updateOrCreate(
+            ['item_id' => $item->id],
+            [
+                'product_id' => $product->id,       // FK: numeric ID for reference
+                'barcode_string' => $barcodeString, // The generated barcode string
+                'downloaded_at' => now(),           // Optional timestamp, adjust as needed
+            ]
+        );
 
-        return view('barcode.show', [
-            'barcodeSVG' => $barcodeSVG,
-            'barcodeString' => $barcodeString,
-            'originalBarcodeString' => $originalBarcodeString,
-            'productId' => $productIdFromProductsTable,
-            'itemId' => $item->id,
-        ]);
+        return redirect()
+            ->route('barcode.index')
+            ->with('success', 'Barcode generated and stored successfully.');
     }
-
 
 
     /**
-     * Download the barcode PNG image for a given item.
+     * Download barcode PNG image for an item.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
     public function download($id)
     {
-        $barcode = ItemBarcode::where('item_id', $id)->firstOrFail();
+        $item = \App\Models\Item::findOrFail($id);
+        $barcodeData = \App\Models\ItemBarcode::where('item_id', $item->id)->first();
 
-        // Generate barcode PNG base64 string
-        $barcodePngBase64 = Barcode::getBarcodePNG($barcode->barcode_string, 'C128', 2, 80);
+        if (!$barcodeData || !$barcodeData->barcode_string) {
+            return back()->with('error', 'No barcode found for this item.');
+        }
 
-        $barcodeImage = base64_decode($barcodePngBase64);
+        $barcodeString = $barcodeData->barcode_string;
 
-        return response($barcodeImage)
-            ->header('Content-Type', 'image/png')
-            ->header('Content-Disposition', 'attachment; filename="barcode_' . $barcode->item_id . '.png"');
+        // Generate barcode PNG using Milon\Barcode
+        $barcodeGenerator = new DNS1D();
+        $barcodeGenerator->setStorPath(storage_path('framework/barcodes/'));
+
+        // getBarcodePNG() returns base64 PNG string → decode it
+        $pngData = base64_decode($barcodeGenerator->getBarcodePNG($barcodeString, 'C128'));
+
+        return Response::make($pngData, 200, [
+            'Content-Type' => 'image/png',
+            'Content-Disposition' => 'attachment; filename="barcode_' . $item->id . '.png"',
+        ]);
     }
+
+    /**
+     * Double check barcode and retrieve item info.
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function doubleCheck(Request $request)
+    {
+        $barcode = $request->input('barcode');
+
+        $item = null;
+
+        if ($barcode) {
+            $item = Item::whereHas('itemBarcode', function ($query) use ($barcode) {
+                $query->where('barcode_string', $barcode);
+            })->with('itemBarcode')->first();
+        }
+
+        // If AJAX request, return JSON
+        if ($request->ajax()) {
+            if ($item) {
+                return response()->json([
+                    'success' => true,
+                    'item' => [
+                        'lc_po_type' => $item->lc_po_type,
+                        'brand' => $item->brand,
+                        'model_no' => $item->model_no,
+                        'serial_no' => $item->serial_no,
+                        'condition' => $item->condition,
+                        'status' => $item->status,
+                        'barcode_string' => $item->itemBarcode->barcode_string ?? '',
+                        'barcode_svg' => DNS1D::getBarcodeSVG($item->itemBarcode->barcode_string ?? '', 'C128', 2, 50),
+                    ],
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No item found for this barcode.',
+                ]);
+            }
+        }
+
+        // If normal GET, show the page without scan results
+        return view('barcode.double-check', ['title' => 'Double Check Section']);
+    }
+
+
 }

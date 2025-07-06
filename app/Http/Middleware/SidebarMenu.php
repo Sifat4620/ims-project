@@ -89,12 +89,13 @@ class SidebarMenu
                                 'link' => route('barcode.index'),  
                                 'icon_color' => 'text-primary-600'
                             ],
-                            // [
-                            //     'name' => 'Download Barcode',
-                            //     'page_id' => 20, 
-                            //     'link' => route('barcode.download'), 
-                            //     'icon_color' => 'text-success-600'
-                            // ],
+                            [
+                                'name' => 'Double Check',
+                                'page_id' => 20, 
+                                'link' => route('barcode.double-check'), 
+                                'icon' => 'fas fa-check-double',  
+                                'icon_color' => 'text-success-600'
+                            ],
                         ],
                     ],
                 ],

@@ -84,7 +84,7 @@
                                             $barcode = $item->itemBarcode->first();
                                         @endphp
                                         <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
-                                        <small class="text-monospace">{{ $barcode->barcode_string }}</small>
+                                        {{-- <small class="text-monospace">{{ $barcode->barcode_string }}</small> --}}
                                     @else
                                         <form method="POST" action="{{ route('barcode.generate', $item->id) }}" class="d-inline">
                                             @csrf
@@ -97,8 +97,8 @@
                                 </td>
                                 <td>
                                     @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
-                                        <a href="{{ route('barcode.download', $item->id) }}" class="btn btn-sm btn-outline-primary shadow-sm" title="Download barcode PNG">
-                                            <i class="fa-solid fa-download"></i> PNG
+                                        <a href="{{ route('barcode.download', $item->id) }}" class="btn btn-sm btn-primary">
+                                           PNG
                                         </a>
                                     @else
                                         <span class="text-muted small">No barcode</span>
