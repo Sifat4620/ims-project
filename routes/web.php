@@ -271,7 +271,13 @@ Route::middleware('auth')->group(function () {
             Route::post('/barcode/generate/{item}', [BarcodeController::class, 'generate'])->name('barcode.generate');
             Route::post('barcodes/{id}/generate', [BarcodeController::class, 'generate']);
             Route::get('/barcode/download/{id}', [BarcodeController::class, 'download'])->name('barcode.download');
-            Route::match(['get', 'post'], 'barcodes/{id}/generate', [BarcodeController::class, 'generate']);
+           
+
+
+            Route::post('/barcode/bulk-pdf', [BarcodeController::class, 'bulkPdf'])->name('barcode.bulkPdf');
+
+        
+           
 
 
             Route::get('/barcode/double-check', [BarcodeController::class, 'doubleCheck'])->name('barcode.double-check');

@@ -7,6 +7,18 @@ use App\Models\Item;
 use App\Models\ItemBarcode;
 use Milon\Barcode\Facades\DNS1DFacade as Barcode;
 use App\Models\Product;
+use Milon\Barcode\DNS1D;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Intervention\Image\ImageManagerStatic as Image;
+
+
+
+
+
+
 
 class BarcodeController extends Controller
 {
@@ -108,6 +120,7 @@ class BarcodeController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
+   
     public function download($id)
     {
         $item = \App\Models\Item::findOrFail($id);
@@ -119,18 +132,79 @@ class BarcodeController extends Controller
 
         $barcodeString = $barcodeData->barcode_string;
 
-        // Generate barcode PNG using Milon\Barcode
-        $barcodeGenerator = new DNS1D();
-        $barcodeGenerator->setStorPath(storage_path('framework/barcodes/'));
+        // Generate SVG string (does NOT require GD)
+        $barcode = new \Milon\Barcode\DNS1D();
+        $svg = $barcode->getBarcodeSVG($barcodeString, 'C128', 2, 60);
 
-        // getBarcodePNG() returns base64 PNG string → decode it
-        $pngData = base64_decode($barcodeGenerator->getBarcodePNG($barcodeString, 'C128'));
+        // Save SVG to file
+        $folder = storage_path('app/public/barcodes');
+        if (!file_exists($folder)) {
+            mkdir($folder, 0755, true);
+        }
 
-        return Response::make($pngData, 200, [
-            'Content-Type' => 'image/png',
-            'Content-Disposition' => 'attachment; filename="barcode_' . $item->id . '.png"',
+        $filename = 'barcode_' . $item->id . '.svg';
+        $fullPath = $folder . '/' . $filename;
+
+        file_put_contents($fullPath, $svg);
+
+        if (!file_exists($fullPath)) {
+            return back()->with('error', 'Failed to generate SVG barcode.');
+        }
+
+        // Return download
+        return response()->download($fullPath, $filename, [
+            'Content-Type' => 'image/svg+xml',
         ]);
     }
+
+
+
+    // Bulk Preview
+    public function bulkPdf(Request $request)
+    {
+        $selectedIds = $request->input('selected_ids');
+
+        if (!$selectedIds || !is_array($selectedIds)) {
+            return back()->with('error', 'No items selected for barcode download.');
+        }
+
+        // Use only selected item IDs for filename
+        $selectedIdString = collect($selectedIds)->join('-');
+
+        // Fetch barcodes by item_id
+        $barcodes = ItemBarcode::whereIn('item_id', $selectedIds)
+            ->get()
+            ->groupBy('item_id');
+
+        $dns1d = new \Milon\Barcode\DNS1D();
+        $dns1d->setStorPath(storage_path('framework/barcodes/'));
+
+        $items = Item::whereIn('id', $selectedIds)->get()->map(function ($item) use ($barcodes, $dns1d) {
+            $barcodeString = optional($barcodes->get($item->id))->first()->barcode_string ?? null;
+            $png = $barcodeString
+                ? 'data:image/png;base64,' . base64_encode($dns1d->getBarcodePNG($barcodeString, 'C128', 2, 60))
+                : null;
+
+            return [
+                'item_id' => $item->id,
+                'item_name' => $item->name ?? 'Unknown',
+                'barcode_string' => $barcodeString,
+                'barcode_png' => $png,
+            ];
+        });
+
+        if ($items->isEmpty()) {
+            return back()->with('error', 'No valid barcodes found.');
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('barcode.bulk-pdf', compact('items'))->setPaper('a4');
+
+        $timestamp = now()->format('Y-m-d_H-i');
+        $filename = "{$timestamp}_items-{$selectedIdString}.pdf";
+
+        return $pdf->download($filename);
+    }
+
 
     /**
      * Double check barcode and retrieve item info.
