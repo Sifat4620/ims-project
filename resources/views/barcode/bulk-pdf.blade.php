@@ -64,7 +64,7 @@
                             <p>No barcode available</p>
                         @endif
                     </div>
-                    <div class="item-info"><strong>Item ID:</strong> {{ $item['item_id'] }}</div>
+                    {{-- <div class="item-info"><strong>Item ID:</strong> {{ $item['item_id'] }}</div> --}}
                     <div class="item-info"><strong>Barcode:</strong> {{ $item['barcode_string'] }}</div>
                 </div>
             @endforeach
