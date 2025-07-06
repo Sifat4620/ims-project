@@ -37,7 +37,7 @@
         <form id="bulkPreviewForm" action="{{ route('barcode.bulkPdf') }}" method="POST" target="_blank" class="p-3">
             @csrf
             <button type="submit" class="btn btn-sm btn-warning">
-                <i class="ri-eye-line"></i> Preview Selected Barcodes
+                <i class="ri-eye-line"></i> Download Selected Barcodes
             </button>
 
             <!-- Product Table -->
@@ -89,7 +89,7 @@
                                         @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
                                             @php $barcode = $item->itemBarcode->first(); @endphp
                                             <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
-                                            <small class="text-monospace">{{ $barcode->barcode_string }}</small>
+                                            {{-- <small class="text-monospace">{{ $barcode->barcode_string }}</small> --}}
                                         @else
                                             <form method="POST" action="{{ route('barcode.generate', $item->id) }}" class="d-inline">
                                                 @csrf
