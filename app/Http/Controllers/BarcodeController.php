@@ -219,34 +219,34 @@ class BarcodeController extends Controller
 
     // For AJAX call
     public function ajaxDoubleCheck(Request $request)
-{
-    $barcode = $request->input('barcode');
+    {
+        $barcode = $request->input('barcode');
 
-    $item = \App\Models\Item::whereHas('itemBarcode', function ($query) use ($barcode) {
-        $query->where('barcode_string', $barcode);
-    })->with('itemBarcode')->first();
+        $item = \App\Models\Item::whereHas('itemBarcode', function ($query) use ($barcode) {
+            $query->where('barcode_string', $barcode);
+        })->with('itemBarcode')->first();
 
-    if ($item && $item->itemBarcode) {
+        if ($item && $item->itemBarcode) {
+            return response()->json([
+                'success' => true,
+                'item' => [
+                    'lc_po_type' => $item->lc_po_type,
+                    'brand' => $item->brand,
+                    'model_no' => $item->model_no,
+                    'serial_no' => $item->serial_no,
+                    'condition' => $item->condition,
+                    'status' => $item->status,
+                    'barcode_string' => $item->ajaxBarcode->barcode_string,
+                    'barcode_svg' => \DNS1D::getBarcodeSVG($item->ajaxBarcode->barcode_string, 'C128', 2, 50),
+                ],
+            ]);
+        }
+
         return response()->json([
-            'success' => true,
-            'item' => [
-                'lc_po_type' => $item->lc_po_type,
-                'brand' => $item->brand,
-                'model_no' => $item->model_no,
-                'serial_no' => $item->serial_no,
-                'condition' => $item->condition,
-                'status' => $item->status,
-                'barcode_string' => $item->ajaxBarcode->barcode_string,
-                'barcode_svg' => \DNS1D::getBarcodeSVG($item->ajaxBarcode->barcode_string, 'C128', 2, 50),
-            ],
+            'success' => false,
+            'message' => 'No item found for this barcode.',
         ]);
     }
-
-    return response()->json([
-        'success' => false,
-        'message' => 'No item found for this barcode.',
-    ]);
-}
 
 
 

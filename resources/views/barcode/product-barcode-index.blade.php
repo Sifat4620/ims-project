@@ -86,18 +86,17 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
-                                            @php $barcode = $item->itemBarcode->first(); @endphp
-                                            <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
-                                            {{-- <small class="text-monospace">{{ $barcode->barcode_string }}</small> --}}
-                                        @else
-                                            <form method="POST" action="{{ route('barcode.generate', $item->id) }}" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-success shadow-sm">
-                                                    <i class="fa fa-barcode"></i> Generate
-                                                </button>
-                                            </form>
-                                        @endif
+                                            @if ($item->itemBarcode->isNotEmpty())
+                                                @php $barcode = $item->itemBarcode->first(); @endphp
+                                                <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
+                                            @else
+                                                <form method="POST" action="{{ route('barcode.generate', $item->id) }}" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-success shadow-sm">
+                                                        <i class="fa fa-barcode"></i> Generate
+                                                    </button>
+                                                </form>
+                                            @endif
                                     </td>
                                     <td>
                                         @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
