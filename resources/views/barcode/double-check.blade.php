@@ -7,34 +7,26 @@
             <div class="row">
                 <div class="col-lg-12">
 
-                    <!-- Scan Section -->
-                    <div class="card shadow-sm border rounded-3 mb-4">
-                        <div class="card-header bg-secondary text-white fw-bold d-flex align-items-center">
+                    <!-- Barcode Input Section -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-dark text-white fw-bold">
                             <i class="fa fa-barcode me-2"></i> Scan Product Barcode
                         </div>
                         <div class="card-body">
-                            <label for="barcodeInput" class="form-label fw-semibold">Scan Barcode</label>
-                            <input
-                                type="text"
-                                id="barcodeInput"
-                                class="form-control shadow-sm"
-                                placeholder="Scan barcode and press Enter..."
-                                autocomplete="off"
-                                autofocus
-                            >
-                            <small class="text-muted fst-italic">Each scan will appear below. Duplicate scans will increase quantity.</small>
+                            <input type="text" id="barcodeInput" class="form-control" placeholder="Scan barcode and press Enter..." autofocus>
+                            <small class="text-muted">Each scan will appear below. Duplicate scans will increase quantity.</small>
                         </div>
                     </div>
 
-                    <!-- Scanned Product Table -->
-                    <div class="card shadow-sm border rounded-3">
-                        <div class="card-header bg-light fw-bold d-flex align-items-center justify-content-between">
-                            <span><i class="fa fa-list-check me-2"></i> Scanned Products</span>
+                    <!-- Scanned Items Table -->
+                    <div class="card">
+                        <div class="card-header bg-light fw-bold d-flex justify-content-between">
+                            <span>Scanned Products</span>
                             <span>Total Quantity: <span id="totalQty" class="badge bg-success">0</span></span>
                         </div>
                         <div class="card-body table-responsive">
-                            <table class="table table-bordered table-sm align-middle text-center" id="scannedTable">
-                                <thead class="table-light">
+                            <table class="table table-bordered text-center" id="scannedTable">
+                                <thead class="table-secondary">
                                     <tr>
                                         <th>#</th>
                                         <th>Brand</th>
@@ -49,7 +41,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="text-muted fst-italic placeholder-row">
+                                    <tr class="placeholder-row text-muted fst-italic">
                                         <td colspan="10">Scanned items will appear here.</td>
                                     </tr>
                                 </tbody>
@@ -62,141 +54,108 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('extra-js')
+{{-- ✅ Inline JS placed directly here for compatibility --}}
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('barcodeInput');
+    const tableBody = document.querySelector('#scannedTable tbody');
+    const totalQtyDisplay = document.getElementById('totalQty');
     let scannedItems = [];
     let scannedCount = 0;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('barcodeInput');
-        const tableBody = document.querySelector('#scannedTable tbody');
-        const totalQtyDisplay = document.getElementById('totalQty');
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const code = input.value.trim();
+            if (!code) return;
 
-        // Optional: Fetch barcode passed from backend (via controller)
-        const autoBarcode = @json(request('barcode', ''));
+            input.value = '';
+            input.disabled = true;
 
-        if (autoBarcode) {
-            fetchBarcodeAndAdd(autoBarcode);
-        }
+            fetch(`/barcode/ajax-check?barcode=${encodeURIComponent(code)}`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Fetched:', data);
+                    scannedCount++;
 
-        input.addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const code = input.value.trim();
-                if (!code) return;
-                input.value = '';
-                input.disabled = true;
-                fetchBarcodeAndAdd(code);
-            }
-        });
+                    const placeholder = document.querySelector('.placeholder-row');
+                    if (placeholder) placeholder.remove();
 
-        function fetchBarcodeAndAdd(code) {
-            fetch(`/barcode/ajax-check?barcode=${encodeURIComponent(code)}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(res => res.json())
-            .then(data => {
-                scannedCount++;
+                    if (data.success && data.item) {
+                        const item = data.item;
+                        const barcode = item.barcode_string;
+                        const existing = scannedItems.find(i => i.barcode === barcode);
 
-                // Remove placeholder if exists
-                const placeholder = tableBody.querySelector('.placeholder-row');
-                if (placeholder) placeholder.remove();
+                        if (existing) {
+                            existing.quantity++;
+                            const qtyCell = document.querySelector(`#row-${existing.id} .qty`);
+                            if (qtyCell) qtyCell.textContent = existing.quantity;
+                        } else {
+                            const id = scannedItems.length + 1;
+                            scannedItems.push({ id, barcode, quantity: 1 });
 
-                const row = document.createElement('tr');
-
-                if (data.success) {
-                    const item = data.item;
-
-                    const existing = scannedItems.find(i => i.barcode === item.barcode_string);
-                    if (existing) {
-                        existing.quantity++;
-                        const qtyCell = document.querySelector(`#row-${existing.id} .qty`);
-                        qtyCell.textContent = existing.quantity;
+                            const row = document.createElement('tr');
+                            row.id = `row-${id}`;
+                            row.innerHTML = `
+                                <td>${id}</td>
+                                <td>${item.brand}</td>
+                                <td>${item.model_no}</td>
+                                <td>${item.lc_po_type}</td>
+                                <td>${item.serial_no}</td>
+                                <td>${item.condition}</td>
+                                <td>${item.status}</td>
+                                <td class="qty">1</td>
+                                <td>${item.barcode_string}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="removeItem(${id})">Remove</button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        }
                     } else {
-                        const id = scannedItems.length + 1;
-                        scannedItems.push({
-                            id: id,
-                            barcode: item.barcode_string,
-                            quantity: 1
-                        });
-
-                        row.id = `row-${id}`;
+                        const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${id}</td>
-                            <td>${item.brand}</td>
-                            <td>${item.model_no}</td>
-                            <td>${item.lc_po_type}</td>
-                            <td>${item.serial_no}</td>
-                            <td>${item.condition}</td>
-                            <td>${item.status}</td>
-                            <td class="qty">1</td>
-                            <td>
-                                <div>${item.barcode_svg}</div>
-                                <small class="text-monospace">${item.barcode_string}</small>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" onclick="removeItem(${id})">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                            <td>${scannedCount}</td>
+                            <td colspan="9" class="text-danger">
+                                <strong>No item found for barcode "${code}"</strong>
                             </td>
                         `;
                         tableBody.appendChild(row);
                     }
 
                     updateTotalQuantity();
-                } else {
-                    row.innerHTML = `
-                        <td>${scannedCount}</td>
-                        <td colspan="9">
-                            <div class="alert alert-warning mb-0 py-1 px-2 text-center">
-                                No item found for <strong>${code}</strong>.
-                            </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                }
-
-                input.disabled = false;
-                input.focus();
-            })
-            .catch(() => {
-                alert('Error fetching barcode info.');
-                input.disabled = false;
-                input.focus();
-            });
-        }
-
-        window.removeItem = function(id) {
-            const row = document.getElementById(`row-${id}`);
-            if (row) row.remove();
-            scannedItems = scannedItems.filter(i => i.id !== id);
-            updateTotalQuantity();
-
-            if (scannedItems.length === 0) {
-                const placeholder = document.createElement('tr');
-                placeholder.className = 'text-muted fst-italic placeholder-row';
-                placeholder.innerHTML = `<td colspan="10">Scanned items will appear here.</td>`;
-                tableBody.appendChild(placeholder);
-            }
-        }
-
-        function updateTotalQuantity() {
-            const total = scannedItems.reduce((sum, item) => sum + item.quantity, 0);
-            totalQtyDisplay.textContent = total;
+                    input.disabled = false;
+                    input.focus();
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    alert('Error fetching barcode data.');
+                    input.disabled = false;
+                    input.focus();
+                });
         }
     });
-</script>
 
-<style>
-    #barcodeInput:focus {
-        border-color: #198754 !important;
-        box-shadow: 0 0 6px #19875466;
-        outline: none;
+    window.removeItem = function (id) {
+        const row = document.getElementById(`row-${id}`);
+        if (row) row.remove();
+
+        scannedItems = scannedItems.filter(i => i.id !== id);
+        updateTotalQuantity();
+
+        if (scannedItems.length === 0) {
+            const placeholder = document.createElement('tr');
+            placeholder.className = 'placeholder-row text-muted fst-italic';
+            placeholder.innerHTML = `<td colspan="10">Scanned items will appear here.</td>`;
+            tableBody.appendChild(placeholder);
+        }
+    };
+
+    function updateTotalQuantity() {
+        const total = scannedItems.reduce((sum, item) => sum + item.quantity, 0);
+        totalQtyDisplay.textContent = total;
     }
-    .table td, .table th {
-        vertical-align: middle;
-    }
-</style>
+});
+</script>
 @endsection
