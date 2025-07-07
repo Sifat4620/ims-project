@@ -86,6 +86,7 @@
                                         </span>
                                     </td>
                                     <td>
+                                        {{-- VM issued Solve Done--}}
                                             @if ($item->itemBarcode->isNotEmpty())
                                                 @php $barcode = $item->itemBarcode->first(); @endphp
                                                 <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
