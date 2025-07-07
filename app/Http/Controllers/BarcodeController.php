@@ -17,10 +17,6 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 
 
 
-
-
-
-
 class BarcodeController extends Controller
 {
     /**
@@ -66,7 +62,7 @@ class BarcodeController extends Controller
      * @param int $itemId
      * @return \Illuminate\View\View
      */
-   public function generate($itemId)
+    public function generate($itemId)
     {
         // Find the item by ID or fail with 404
         $item = Item::findOrFail($itemId);
@@ -161,51 +157,51 @@ class BarcodeController extends Controller
 
 
     // Bulk Preview
-   public function bulkPdf(Request $request)
-{
-    $selectedIds = $request->input('selected_ids');
+    public function bulkPdf(Request $request)
+    {
+        $selectedIds = $request->input('selected_ids');
 
-    if (!$selectedIds || !is_array($selectedIds)) {
-        return back()->with('error', 'No items selected for barcode download.');
+        if (!$selectedIds || !is_array($selectedIds)) {
+            return back()->with('error', 'No items selected for barcode download.');
+        }
+
+        // Generate ID string for file name
+        $selectedIdString = collect($selectedIds)->join('-');
+
+        // Fetch barcodes and items
+        $barcodes = ItemBarcode::whereIn('item_id', $selectedIds)
+            ->get()
+            ->groupBy('item_id');
+
+        $generator = new BarcodeGeneratorPNG(); // Instantiate the generator
+
+        $items = Item::whereIn('id', $selectedIds)->get()->map(function ($item) use ($barcodes, $generator) {
+            $barcodeString = optional($barcodes->get($item->id))->first()->barcode_string ?? null;
+            $barcodePng = $barcodeString
+                ? 'data:image/png;base64,' . base64_encode(
+                    $generator->getBarcode($barcodeString, $generator::TYPE_CODE_128)
+                )
+                : null;
+
+            return [
+                'item_id' => $item->id,
+                'item_name' => $item->name ?? 'Unknown',
+                'barcode_string' => $barcodeString,
+                'barcode_png' => $barcodePng,
+            ];
+        });
+
+        if ($items->isEmpty()) {
+            return back()->with('error', 'No valid barcodes found.');
+        }
+
+        $pdf = Pdf::loadView('barcode.bulk-pdf', compact('items'))->setPaper('a4');
+
+        $timestamp = now()->format('Y-m-d_H-i');
+        $filename = "{$timestamp}_items-{$selectedIdString}.pdf";
+
+        return $pdf->download($filename);
     }
-
-    // Generate ID string for file name
-    $selectedIdString = collect($selectedIds)->join('-');
-
-    // Fetch barcodes and items
-    $barcodes = ItemBarcode::whereIn('item_id', $selectedIds)
-        ->get()
-        ->groupBy('item_id');
-
-    $generator = new BarcodeGeneratorPNG(); // Instantiate the generator
-
-    $items = Item::whereIn('id', $selectedIds)->get()->map(function ($item) use ($barcodes, $generator) {
-        $barcodeString = optional($barcodes->get($item->id))->first()->barcode_string ?? null;
-        $barcodePng = $barcodeString
-            ? 'data:image/png;base64,' . base64_encode(
-                $generator->getBarcode($barcodeString, $generator::TYPE_CODE_128)
-            )
-            : null;
-
-        return [
-            'item_id' => $item->id,
-            'item_name' => $item->name ?? 'Unknown',
-            'barcode_string' => $barcodeString,
-            'barcode_png' => $barcodePng,
-        ];
-    });
-
-    if ($items->isEmpty()) {
-        return back()->with('error', 'No valid barcodes found.');
-    }
-
-    $pdf = Pdf::loadView('barcode.bulk-pdf', compact('items'))->setPaper('a4');
-
-    $timestamp = now()->format('Y-m-d_H-i');
-    $filename = "{$timestamp}_items-{$selectedIdString}.pdf";
-
-    return $pdf->download($filename);
-}
 
 
     /**
@@ -214,45 +210,46 @@ class BarcodeController extends Controller
      * @param Request $request
      * @return \Illuminate\View\View
      */
+    // For loading the page
     public function doubleCheck(Request $request)
     {
-        $barcode = $request->input('barcode');
-
-        $item = null;
-
-        if ($barcode) {
-            $item = Item::whereHas('itemBarcode', function ($query) use ($barcode) {
-                $query->where('barcode_string', $barcode);
-            })->with('itemBarcode')->first();
-        }
-
-        // If AJAX request, return JSON
-        if ($request->ajax()) {
-            if ($item) {
-                return response()->json([
-                    'success' => true,
-                    'item' => [
-                        'lc_po_type' => $item->lc_po_type,
-                        'brand' => $item->brand,
-                        'model_no' => $item->model_no,
-                        'serial_no' => $item->serial_no,
-                        'condition' => $item->condition,
-                        'status' => $item->status,
-                        'barcode_string' => $item->itemBarcode->barcode_string ?? '',
-                        'barcode_svg' => DNS1D::getBarcodeSVG($item->itemBarcode->barcode_string ?? '', 'C128', 2, 50),
-                    ],
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No item found for this barcode.',
-                ]);
-            }
-        }
-
-        // If normal GET, show the page without scan results
-        return view('barcode.double-check', ['title' => 'Double Check Section']);
+        $title = 'Double Check Barcode';
+        return view('barcode.double-check',compact('title'));
     }
+
+    // For AJAX call
+    public function ajaxDoubleCheck(Request $request)
+{
+    $barcode = $request->input('barcode');
+
+    $item = \App\Models\Item::whereHas('itemBarcode', function ($query) use ($barcode) {
+        $query->where('barcode_string', $barcode);
+    })->with('itemBarcode')->first();
+
+    if ($item && $item->itemBarcode) {
+        return response()->json([
+            'success' => true,
+            'item' => [
+                'lc_po_type' => $item->lc_po_type,
+                'brand' => $item->brand,
+                'model_no' => $item->model_no,
+                'serial_no' => $item->serial_no,
+                'condition' => $item->condition,
+                'status' => $item->status,
+                'barcode_string' => $item->itemBarcode->barcode_string,
+                'barcode_svg' => \DNS1D::getBarcodeSVG($item->itemBarcode->barcode_string, 'C128', 2, 50),
+            ],
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'No item found for this barcode.',
+    ]);
+}
+
+
+
 
 
 }

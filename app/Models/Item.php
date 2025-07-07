@@ -67,16 +67,16 @@ class Item extends Model
      * Booted method to handle model events.
      */
 
-
-     public function itemBarcode()
+    public function itemBarcode()
     {
-        return $this->hasMany(ItemBarcode::class);
+        return $this->hasOne(ItemBarcode::class, 'item_id');
     }
 
     public function product()
     {
          return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
+    
 
 
 
