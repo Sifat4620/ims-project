@@ -6,7 +6,6 @@
 
         <!-- Card Header -->
         <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center gap-3 p-3">
-
             <!-- Items Per Page -->
             <form method="GET" action="{{ route('barcode.index') }}" class="d-flex align-items-center gap-2 m-0">
                 <label for="perPage" class="form-label mb-0 text-secondary fw-semibold">Show</label>
@@ -85,24 +84,18 @@
                                             {{ $item->status }}
                                         </span>
                                     </td>
-                                    <td>
-                                        {{-- VM issued Solve Done--}}
-                                            @if ($item->itemBarcode->isNotEmpty())
-                                                @php $barcode = $item->itemBarcode->first(); @endphp
-                                                <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
-                                            @else
-                                                <form method="POST" action="{{ route('barcode.generate', $item->id) }}" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-success shadow-sm">
-                                                        <i class="fa fa-barcode"></i> Generate
-                                                    </button>
-                                                </form>
-                                            @endif
+                                    <td class="barcode-cell" data-id="{{ $item->id }}">
+                                        @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
+                                            @php $barcode = $item->itemBarcode->first(); @endphp
+                                            <div>{!! DNS1D::getBarcodeSVG($barcode->barcode_string, 'C128', 2, 80) !!}</div>
+                                        @else
+                                            <div class="text-muted small">Generating...</div>
+                                        @endif
                                     </td>
                                     <td>
                                         @if ($item->itemBarcode && $item->itemBarcode->isNotEmpty())
                                             <a href="{{ route('barcode.download', $item->id) }}" class="btn btn-sm btn-success">
-                                                SVG
+                                                Print
                                             </a>
                                         @else
                                             <span class="text-muted small">No barcode</span>
@@ -133,12 +126,40 @@
         </form>
     </div>
 </div>
-@endsection
-
-@section('extra-js')
 <script>
     function toggleAllCheckboxes(source) {
         document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = source.checked);
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.barcode-cell').forEach(cell => {
+            const itemId = cell.getAttribute('data-id');
+            if (cell.textContent.includes('Generating')) {
+                fetch("{{ route('barcode.ajax.generate') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ item_id: itemId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        cell.innerHTML = data.barcode_svg;
+                    } else {
+                        cell.innerHTML = '<span class="text-danger small">' + data.message + '</span>';
+                    }
+                })
+                .catch(() => {
+                    cell.innerHTML = '<span class="text-danger small">Wait a minute to auto-generate</span>';
+                });
+            }
+        });
+    });
 </script>
+
+
 @endsection
+
+
