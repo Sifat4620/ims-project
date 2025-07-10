@@ -32,7 +32,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="total_amount" class="form-label">Total Amount</label>
+                                <label for="total_amount" class="form-label">Total Amount($)</label>
                                 <input type="number" step="any" class="form-control @error('total_amount') is-invalid @enderror" id="total_amount" name="total_amount" placeholder="Enter Total Amount" value="{{ old('total_amount') }}" required>
                                 @error('total_amount')
                                     <div class="invalid-feedback">{{ $message }}</div>
