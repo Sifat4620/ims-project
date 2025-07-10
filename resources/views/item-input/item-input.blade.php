@@ -167,7 +167,7 @@
                                 <th scope="col">Category & Brand</th>
                                 <th scope="col">Model</th>
                                 <th scope="col">Serial(s)</th>
-                                <th scope="col" class="text-center">Condition & Status</th>
+                                <th scope="col" class="text-center">Condition & Issued</th>
                                 <th scope="col" class="text-center">Specification</th>
                                 <th scope="col" class="text-center">Holding Location</th>
                                 <th scope="col" class="text-center">Date</th>
