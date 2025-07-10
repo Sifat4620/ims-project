@@ -141,7 +141,7 @@ class BarcodeController extends Controller
     {
         $barcode = $request->input('barcode');
 
-        $item = Item::whereHas('itemBarcode', function ($query) use ($barcode) {
+        $item = Item::whereHas('ajaxBarcode', function ($query) use ($barcode) {
             $query->where('barcode_string', $barcode);
         })->with('itemBarcode')->first();
 
@@ -155,8 +155,8 @@ class BarcodeController extends Controller
                     'serial_no' => $item->serial_no,
                     'condition' => $item->condition,
                     'status' => $item->status,
-                    'barcode_string' => $item->itemBarcode->barcode_string,
-                    'barcode_svg' => \DNS1D::getBarcodeSVG($item->itemBarcode->barcode_string, 'C128', 2, 50),
+                    'barcode_string' => $item->ajaxBarcode->barcode_string,
+                    'barcode_svg' => \DNS1D::getBarcodeSVG($item->ajaxBarcode->barcode_string, 'C128', 2, 50),
                 ],
             ]);
         }
