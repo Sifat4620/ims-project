@@ -1,3 +1,7 @@
+<!-- Load Iconify if not already included -->
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+<!-- Navbar Header -->
 <div class="navbar-header">
     <div class="row align-items-center justify-content-between">
         <div class="col-auto">
@@ -14,52 +18,26 @@
         <div class="col-auto">
             <div class="d-flex flex-wrap align-items-center gap-3">
                 <button type="button" data-theme-toggle class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"></button>
-                
-                <!-- Language Dropdown -->
-                <div class="dropdown d-none d-sm-inline-block">
-                    <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown">
-                        <img src="{{ asset('assets/images/lang-flag.png') }}" alt="image" class="w-24 h-24 object-fit-cover rounded-circle">
-                    </button>
-                    <div class="dropdown-menu to-top dropdown-menu-sm">
-                        <div class="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
-                            <div>
-                                <h6 class="text-lg text-primary-light fw-semibold mb-0">Choose Your Language</h6>
-                            </div>
-                        </div>
-                        <div class="max-h-400-px overflow-y-auto scroll-sm pe-8">
-                            <div class="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                                <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="english">
-                                    <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                        <img src="{{ asset('assets/images/flags/flag1.png') }}" alt="" class="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0">
-                                        <span class="text-md fw-semibold mb-0">English</span>
-                                    </span>
-                                </label>
-                                <input class="form-check-input" type="radio" name="crypto" id="english">
-                            </div>
-                            <div class="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                                <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="bangladesh">
-                                    <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                                        <img src="{{ asset('assets/images/flags/flag6.png') }}" alt="" class="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0">
-                                        <span class="text-md fw-semibold mb-0">Bangladesh</span>
-                                    </span>
-                                </label>
-                                <input class="form-check-input" type="radio" name="crypto" id="bangladesh">
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- Language dropdown end -->
 
-                <!-- User Profile Dropdown -->
+                <!-- Language Dropdown (optional, currently disabled) -->
+                {{-- ... language code remains commented out ... --}}
+
+                <!-- User Profile Dropdown with Avatar Icon and Active Status -->
                 <div class="dropdown">
-                    <button class="d-flex justify-content-center align-items-center rounded-circle" type="button" data-bs-toggle="dropdown">
-                        <!-- Use dynamic user avatar here -->
-                        <img src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('assets/images/user.png') }}" alt="image" class="w-40-px h-40-px object-fit-cover rounded-circle">
+                    <button class="d-flex justify-content-center align-items-center position-relative rounded-circle" 
+                            type="button" data-bs-toggle="dropdown"
+                            style="width: 40px; height: 40px; background-color: #f0f0f0;">
+                        <!-- Avatar icon instead of image -->
+                        <iconify-icon icon="ph:user-duotone" class="text-dark" style="font-size: 24px;"></iconify-icon>
+
+                        <!-- Active blinking green dot -->
+                        <span class="active-indicator position-absolute" style="bottom: 2px; right: 2px;"></span>
                     </button>
+
                     @auth
                     <div class="dropdown-menu to-top dropdown-menu-sm">
                         <div class="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                             <div>
-                                <!-- Display full_name from Authenticated User -->
                                 <h6 class="text-lg text-primary-light fw-semibold mb-2">{{ Auth::user()->full_name }}</h6>
                                 <span class="text-secondary-light fw-medium text-sm">
                                     @foreach (Auth::user()->roles as $role)
@@ -87,14 +65,33 @@
                             </li>
                         </ul>
                     </div>
-                @endauth
-                @guest
-                    <p>Please log in to access the dropdown.</p>
-                @endguest
-                
-                
-                </div><!-- Profile dropdown end -->
+                    @endauth
+
+                    @guest
+                        <p>Please log in to access the dropdown.</p>
+                    @endguest
+                </div>
+                <!-- Profile dropdown end -->
+
             </div>
         </div>
     </div>
 </div>
+
+<!-- Blinking Green Dot CSS -->
+<style>
+    .active-indicator {
+        width: 10px;
+        height: 10px;
+        background-color: #28a745;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        animation: blink 1s infinite;
+        box-shadow: 0 0 5px #28a745;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+</style>
