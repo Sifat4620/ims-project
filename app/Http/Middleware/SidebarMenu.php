@@ -47,7 +47,7 @@ class SidebarMenu
 
             // Invertory manager , Invertory Entry , Sales, Dircetor
             [
-                'title' => 'Select Product',
+                'title' => 'Product Delivery',
                 'icon' => 'hugeicons:invoice-03',
                 'link' => 'javascript:void(0)',
                 'submenus' => [
