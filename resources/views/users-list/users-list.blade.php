@@ -8,11 +8,9 @@
             <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
             <form method="GET" action="{{ route('user.list') }}" class="d-flex align-items-center gap-3">
                 <select name="perPage" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
-                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                    <option value="30" {{ $perPage == 30 ? 'selected' : '' }}>30</option>
-                    <option value="40" {{ $perPage == 40 ? 'selected' : '' }}>40</option>
-                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                    @foreach([10, 20, 30, 40, 50] as $size)
+                        <option value="{{ $size }}" {{ $perPage == $size ? 'selected' : '' }}>{{ $size }}</option>
+                    @endforeach
                 </select>
 
                 <input type="text" name="search" class="bg-base h-40-px w-auto" value="{{ $search }}" placeholder="Search" onchange="this.form.submit()">
@@ -23,6 +21,7 @@
             Add New User
         </a>                    
     </div>
+
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">
             <table class="table bordered-table sm-table mb-0">
@@ -31,7 +30,7 @@
                         <th scope="col">
                             <div class="d-flex align-items-center gap-10">
                                 <div class="form-check style-check d-flex align-items-center">
-                                    <input class="form-check-input radius-4 border input-form-dark" type="checkbox" name="checkbox" id="selectAll">
+                                    <input class="form-check-input radius-4 border input-form-dark" type="checkbox" id="selectAll">
                                 </div>
                                 S.L
                             </div>
@@ -43,23 +42,43 @@
                         <th scope="col">Department</th>
                         <th scope="col">Designation</th>
                         <th scope="col" class="text-center">Status</th>
-                        <th scope="col" class="text-center">Action</th>
+                        {{-- <th scope="col" class="text-center">Action</th> --}}
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($users as $user)
+                    @forelse($users as $index => $user)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $users->firstItem() + $index }}</td>
                         <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y') }}</td>
                         <td>{{ $user->user_id }}</td>
+
+
+                        {{-- image --}}
                         <td>
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('storage/' . $user->image) }}" alt="" class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden">
+                                @php
+                                    $imagePath = $user->image;
+
+                                    // Remove prefix if it already contains "profile_images/"
+                                    $imagePath = str_starts_with($imagePath, 'profile_images/')
+                                        ? $imagePath
+                                        : 'profile_images/' . $imagePath;
+
+                                    $imageSrc = $user->image
+                                        ? asset('storage/' . $imagePath)
+                                        : asset('images/default-avatar.png');
+                                @endphp
+
+                                <img src="{{ $imageSrc }}" alt="User Image"
+                                    class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden">
+
                                 <div class="flex-grow-1">
                                     <span class="text-md mb-0 fw-normal text-secondary-light">{{ $user->full_name }}</span>
                                 </div>
                             </div>
                         </td>
+
+
                         <td><span class="text-md mb-0 fw-normal text-secondary-light">{{ $user->email }}</span></td>
                         <td>{{ $user->department }}</td>
                         <td>{{ $user->role_name ?? 'No role assigned' }}</td>
@@ -68,13 +87,19 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex align-items-center gap-10 justify-content-center">
-                                <button type="button" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                                {{-- <a href="{{ route('user.show', $user->id) }}" 
+                                   class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
+                                   title="View">
                                     <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                </button>
+                                </a> --}}
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center py-12 text-muted">No users found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -92,10 +117,9 @@
 
 @section('extra-js')
 <script>
-    $(document).ready(function() {
-        $(".remove-item-btn").on("click", function() {
-            $(this).closest("tr").addClass("d-none");
-        });
+    document.getElementById('selectAll')?.addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
     });
 </script>
 @endsection

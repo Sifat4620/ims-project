@@ -46,7 +46,7 @@ class ConfirmInvoiceController extends Controller
 
         // Pass the necessary data to the view
         $title = 'Confirm Challan';
-        return view('invoice-add', [
+        return view('product-add.product-add', [
             'selectedItems' => $selectedItems,
             'title' => $title,
             'invoiceNumber' => $this->invoiceNumber,

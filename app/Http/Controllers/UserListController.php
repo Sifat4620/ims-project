@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
+
 class UserListController extends Controller
 {
     public function index(Request $request)

@@ -52,7 +52,7 @@ class InvoiceDownloadController extends Controller
         $this->insertInvoiceData($data);
 
         // Render the invoice-preview view with the prepared data
-        return view('invoice-preview', $data);
+        return view('challan-preview.challan-preview', $data);
     }
 
 
