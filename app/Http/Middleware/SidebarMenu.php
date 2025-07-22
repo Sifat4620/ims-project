@@ -75,7 +75,7 @@ class SidebarMenu
 
             // Barcode Section : Inventory Manager, Inventory Entry, Sales, Director
             [
-                'title' => 'Scanning Section',
+                'title' => 'Barcode Section',
                 'icon' => 'mdi:barcode',
                 'link' => 'javascript:void(0)',
                 'submenus' => [
@@ -90,7 +90,7 @@ class SidebarMenu
                                 'icon_color' => 'text-primary-600'
                             ],
                             [
-                                'name' => 'Double Check',
+                                'name' => 'Scanning Products',
                                 'page_id' => 20, 
                                 'link' => route('barcode.double-check'), 
                                 'icon' => 'fas fa-check-double',  

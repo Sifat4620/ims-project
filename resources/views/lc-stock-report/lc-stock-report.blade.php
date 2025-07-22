@@ -73,7 +73,7 @@
                                 <tr>
                                     <td>
                                         <strong>No:</strong>
-                                        <span class="text-danger">{{ implode(', ', $item['serial_numbers_no']) }}</span>
+                                        <span class="text-success">{{ implode(', ', $item['serial_numbers_no']) }}</span>
                                     </td>
                                 </tr>
                             @empty
