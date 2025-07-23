@@ -119,7 +119,6 @@ class StockReportController extends Controller
     }
 
 
-
     /**
      * Paginate a collection.
      *

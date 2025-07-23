@@ -248,6 +248,7 @@ Route::middleware('auth')->group(function () {
         // Access point start
 
           Route::get('/accessing', [App\Http\Controllers\AccessController::class, 'show'])->name('accessing');
+          Route::get('/accessing/download/{lcpo_no}', [App\Http\Controllers\AccessController::class, 'download'])->name('access.download');
           Route::get('/upgrade-info', [App\Http\Controllers\UpgradeInfoController::class, 'index'])->name('upgrade.info');
 
             Route::post('/upgrade-info', [UpgradeInfoController::class, 'store'])->name('upgrade.info.store');
