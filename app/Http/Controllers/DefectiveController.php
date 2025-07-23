@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FaultyItem; // Import the FaultyItem model
+use App\Models\FaultyItem;
 use Illuminate\Http\Request;
 
 class DefectiveController extends Controller
@@ -16,10 +16,12 @@ class DefectiveController extends Controller
     {
         $title = 'Defective Items';
 
-        // Fetch defective items with associated item details
-        $defectiveItems = FaultyItem::with('item:id,brand,category')->get();
+        // Fetch defective items with selective fields and related item data
+        $defectiveItems = FaultyItem::select('id', 'item_id', 'created_at')
+            ->with(['item:id,brand,category,serial_no,model_no'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        // Pass the data to the view
         return view('defective-data.defective-data', compact('title', 'defectiveItems'));
     }
 }

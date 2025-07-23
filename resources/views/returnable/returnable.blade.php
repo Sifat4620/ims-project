@@ -13,26 +13,28 @@
                                 <th scope="col" class="bg-base">LC or PO Number</th>
                                 <th scope="col" class="bg-base">Product Brand</th>
                                 <th scope="col" class="bg-base">Product Category</th>
+                                <th scope="col" class="bg-base">Serial Number</th> <!-- New Column -->
                                 <th scope="col" class="bg-base">Issue Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Dynamic Data Loop -->
                             @foreach ($returns as $return)
                                 <tr>
                                     <td class="bg-primary-light">#{{ $return->id }}</td>
                                     <td class="bg-primary-light">{{ $return->lc_po_type ?? 'N/A' }}</td>
                                     <td class="bg-primary-light">
                                         <div class="d-flex align-items-center">
-                                            <h6 class="text-md mb-0 fw-medium flex-grow-1">{{ $return->item->brand ?? 'Unknown Brand' }}</h6>
+                                            <h6 class="text-md mb-0 fw-medium flex-grow-1">
+                                                {{ $return->item->brand ?? 'Unknown Brand' }}
+                                            </h6>
                                         </div>
                                     </td>
                                     <td class="bg-primary-light">{{ $return->item->category ?? 'Uncategorized' }}</td>
+                                    <td class="bg-primary-light">{{ $return->item->serial_no ?? 'N/A' }}</td> <!-- New Cell -->
                                     <td class="bg-primary-light">{{ $return->created_at->format('d M Y') }}</td>
-                                    
                                 </tr>
                             @endforeach
-                            <!-- No Data Case -->
+
                             @if ($returns->isEmpty())
                                 <tr>
                                     <td colspan="6" class="text-center text-muted">No returnable items found.</td>
