@@ -27,7 +27,7 @@
                             </div>
                             <div class="d-flex justify-content-center gap-5 align-items-start">
                                 <div>
-                                    <h3 class="fs-6 mb-1">Invoice : {{ $invoice_number ?? 'Default Value' }}</h3>
+                                    <h3 class="fs-6 mb-1">Challan No : {{ $invoice_number ?? 'Default Value' }}</h3>
                                     <div class="border border-5 p-3 text-center">
                                         <h4 class="fs-6 mb-1">Customer Address</h4>
                                         <p class="mb-1 text-sm">{{ $customer_address ?? 'N/A' }}</p>
@@ -157,7 +157,7 @@
 
                                         <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                                             <div>
-                                                <strong>Invoice:</strong> ${data.invoice_number}<br>
+                                                <strong>Challan No:</strong> ${data.invoice_number}<br>
                                                 <strong>Customer Address:</strong><br>${data.customer_address}
                                             </div>
                                             <div>
