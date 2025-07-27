@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;  // Import the Product model
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CoreDataController extends Controller
 {
     public function index()
     {
-        // Fetch products with pagination (10 products per page)
-        $products = Product::paginate(10);
+        // Fetch all products (no pagination)
+        $products = Product::all();
 
         // Pass the products and title to the view
         $title = 'Core Data';
