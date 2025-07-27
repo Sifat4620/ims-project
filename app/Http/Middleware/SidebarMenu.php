@@ -30,16 +30,14 @@ class SidebarMenu
             ],
            
 
-            // Admin, Invertory manager , Invertory Entry , Sales
+            // Admin, Invertory Entry 
             [
                 'title' => 'Product Entry',
                 'icon' => 'heroicons:document',
                 'link' => route('dataentry.index'),
                 'icon_color' => 'text-success-600',
                 'visibility' => Auth::check() && (
-                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
                     Bouncer::is(Auth::user())->an('Inventory Entry') || 
-                    Bouncer::is(Auth::user())->an('Sales') ||
                     Bouncer::is(Auth::user())->an('Admin')
                 ),
 
@@ -63,10 +61,8 @@ class SidebarMenu
                     ],
                 ],
                 'icon_color' => 'text-info-600',
-                'visibility' => Auth::check() && (
-                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
+                'visibility' => Auth::check() && ( 
                     Bouncer::is(Auth::user())->an('Inventory Entry') || 
-                    Bouncer::is(Auth::user())->an('Sales') || 
                     Bouncer::is(Auth::user())->an('Admin') 
                    
                 ),
@@ -101,7 +97,6 @@ class SidebarMenu
                 ],
                 'icon_color' => 'text-purple-600',
                 'visibility' => Auth::check() && (
-                    Bouncer::is(Auth::user())->an('Inventory Manager') || 
                     Bouncer::is(Auth::user())->an('Inventory Entry') || 
                     Bouncer::is(Auth::user())->an('Admin')
                 ),
@@ -132,7 +127,7 @@ class SidebarMenu
                 'visibility' => Auth::check(),
             ],
                
-            // Sale ,admin and inventory manager see this
+            //admin and inventory manager,inventory entry see this
             [
                 'title' => 'Procurement Document',
                 'icon' => 'heroicons:cloud-arrow-up',
@@ -151,7 +146,6 @@ class SidebarMenu
                 'visibility' => Auth::check() && (
                     Bouncer::is(Auth::user())->an('Inventory Entry') || 
                     Bouncer::is(Auth::user())->an('Admin') || 
-                    Bouncer::is(Auth::user())->an('Sales') || 
                     Bouncer::is(Auth::user())->an('Inventory Manager')
                 ),
 
@@ -167,13 +161,15 @@ class SidebarMenu
             ],   
 
             // Inventory Manager and Admin see this
-            [
+           [
                 'title' => 'Return Product Management',
                 'icon' => 'simple-line-icons:vector',
                 'link' => route('logistics.returnstatuslog'),
                 'icon_color' => 'text-warning-main',
-                'visibility' => Auth::check() && (Bouncer::is(Auth::user())->an('Inventory Manager') || Bouncer::is(Auth::user())->an('Admin')),
-
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Inventory Entry') || 
+                    Bouncer::is(Auth::user())->an('Admin')
+                ),
             ],
             
             // All User see this
