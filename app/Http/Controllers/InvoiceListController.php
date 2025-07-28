@@ -12,28 +12,25 @@ class InvoiceListController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->get('perPage', 10); // Items per page
-        $searchQuery = $request->get('search', ''); // Search input
+        $searchQuery = $request->get('search', '');        // Search input
         $searchField = $request->get('search_field', 'all'); // Search field
-        $issueStatus = $request->get('issue_status', ''); // Issue status
+        $issueStatus = $request->get('issue_status', '');  // Issue status
 
         $query = Item::query();
 
-        // Filter only items where 'status' is 'No'
+        // Only show items where status is 'No'
         $query->where('status', 'No');
 
         // Apply search logic
         if ($searchQuery) {
             $query->where(function ($q) use ($searchQuery, $searchField) {
-                if ($searchField == 'all') {
-                    // Search across multiple fields
-                    $q->where('lc_po_type', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('brand', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('category', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('model_no', 'like', '%' . $searchQuery . '%');
+                if ($searchField === 'all') {
+                    $q->where('lc_po_type', 'like', "%$searchQuery%")
+                    ->orWhere('brand', 'like', "%$searchQuery%")
+                    ->orWhere('category', 'like', "%$searchQuery%")
+                    ->orWhere('model_no', 'like', "%$searchQuery%");
                 } else {
-                    // Search in the specific field
-                    $q->where($searchField, 'like', '%' . $searchQuery . '%');
+                    $q->where($searchField, 'like', "%$searchQuery%");
                 }
             });
         }
@@ -43,17 +40,16 @@ class InvoiceListController extends Controller
             $query->where('status', $issueStatus);
         }
 
-        // Paginate results
-        $items = $query->paginate($perPage)->withQueryString();
+        // Get all filtered results (no pagination)
+        $items = $query->get();
 
-        // Pass data to the view
         return view('product-list.product-list', [
             'title' => 'Product List',
             'items' => $items,
             'search' => $searchQuery,
             'searchField' => $searchField,
-            'perPage' => $perPage,
             'issueStatus' => $issueStatus,
         ]);
     }
+
 }

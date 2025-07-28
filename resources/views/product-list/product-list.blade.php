@@ -126,12 +126,12 @@
             </div>
 
             <!-- Pagination -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-24">
+            {{-- <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-24">
                 <span>Showing {{ $items->firstItem() }} to {{ $items->lastItem() }} of {{ $items->total() }} entries</span>
                 <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
                     {{ $items->links() }}
                 </ul>
-            </div>
+            </div> --}}
         </div>
 
         </div>
