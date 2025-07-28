@@ -3,60 +3,79 @@
 @section('content')
 <div class="row gy-4">
     <div class="col-lg-4">
-        <div class="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
-            <img src="{{ asset('assets/images/user-grid/user-grid-bg1.png') }}" alt="" class="w-100 object-fit-cover">
-            <div class="pb-24 ms-16 mb-24 me-16 mt--100">
-                <div class="text-center border border-top-0 border-start-0 border-end-0">
-                    <img src="{{ asset('assets/images/user-grid/user-grid-img14.png') }}" alt="" class="border br-white border-width-2-px w-200-px h-200-px rounded-circle object-fit-cover">
-                    <h6 class="mb-0 mt-16">{{ $user->full_name ?? 'User not found' }}</h6>
-                    <span class="text-secondary-light mb-16">{{ $user->email ?? 'User not found' }}</span>
-                </div>
+    <div class="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
+        {{-- Background Banner --}}
+        <img src="{{ asset('assets/images/user-grid/user-grid-bg1.png') }}" alt="Banner" class="w-100 object-fit-cover">
 
-                <div class="mt-24">
-                    <h6 class="text-xl mb-16">Personal Info</h6>
-                    <ul>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Full Name</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->full_name ?? 'User not found' }}</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">ID</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->user_id ?? 'User not found' }}</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Email</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->email ?? 'User not found' }}</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Phone Number</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->phone ?? 'User not found' }}</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Department</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->department ?? 'User not found' }}</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Designation</span>
-                            <span class="w-70 text-secondary-light fw-medium">: 
-                                @php
-                                    $designationRole = collect($roles)->firstWhere('id', $user->designation);
-                                @endphp
-                                {{ $designationRole->title ?? $designationRole->name ?? 'N/A' }}
-                            </span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1 mb-12">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Languages</span>
-                            <span class="w-70 text-secondary-light fw-medium">: English</span>
-                        </li>
-                        <li class="d-flex align-items-center gap-1">
-                            <span class="w-30 text-md fw-semibold text-primary-light">Bio</span>
-                            <span class="w-70 text-secondary-light fw-medium">: {{ $user->description ?? 'User not found' }}.</span>
-                        </li>
-                    </ul>
-                </div>
+        @php
+            // Profile image path check
+            $imagePath = $user->image;
+            $imagePath = str_starts_with($imagePath, 'profile_images/')
+                ? $imagePath
+                : 'profile_images/' . $imagePath;
+
+            $imageSrc = ($user->image && Storage::disk('public')->exists($imagePath))
+                ? asset('storage/' . $imagePath)
+                : asset('images/default-avatar.png');
+
+            // Designation title fallback
+            $designationRole = collect($roles)->firstWhere('id', $user->designation);
+            $designation = $designationRole->title ?? $designationRole->name ?? 'N/A';
+        @endphp
+
+        <div class="pb-24 ms-16 mb-24 me-16 mt--100">
+            <div class="text-center border border-top-0 border-start-0 border-end-0">
+                {{-- Profile Image --}}
+                <img src="{{ $imageSrc }}" alt="User Image"
+                     class="border br-white border-width-2-px w-200-px h-200-px rounded-circle object-fit-cover">
+
+                {{-- Name & Email --}}
+                <h6 class="mb-0 mt-16">{{ $user->full_name ?? 'User not found' }}</h6>
+                <span class="text-secondary-light mb-16">{{ $user->email ?? 'Email not available' }}</span>
+            </div>
+
+            {{-- Personal Info --}}
+            <div class="mt-24">
+                <h6 class="text-xl mb-16">Personal Info</h6>
+                <ul>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Full Name</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->full_name ?? 'N/A' }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">ID</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->user_id ?? 'N/A' }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Email</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->email ?? 'N/A' }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Phone Number</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->phone ?? 'N/A' }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Department</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->department ?? 'N/A' }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Designation</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $designation }}</span>
+                    </li>
+                    <li class="d-flex align-items-center gap-1 mb-12">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Languages</span>
+                        <span class="w-70 text-secondary-light fw-medium">: English</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-1">
+                        <span class="w-30 text-md fw-semibold text-primary-light">Bio</span>
+                        <span class="w-70 text-secondary-light fw-medium">: {{ $user->description ?? 'No bio available' }}</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+</div>
+
 
     <div class="col-lg-8">
         <div class="card h-100">
@@ -77,9 +96,9 @@
                 <div class="tab-content" id="pills-tabContent">
                     {{-- Edit Profile Tab --}}
                     <div class="tab-pane fade show active" id="pills-edit-profile" role="tabpanel" aria-labelledby="pills-edit-profile-tab" tabindex="0">
-                        <h6 class="text-md text-primary-light mb-16">Profile Image</h6>
+                        {{-- <h6 class="text-md text-primary-light mb-16">Profile Image</h6> --}}
                         <!-- Upload Image Start -->
-                        <div class="mb-24 mt-16">
+                        {{-- <div class="mb-24 mt-16">
                             <div class="avatar-upload">
                                 <div class="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
                                     <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" hidden>
@@ -91,7 +110,7 @@
                                     <div id="imagePreview" style="background-image: url('{{ $user->profile_photo_url ?? asset('assets/images/default-profile.png') }}');"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Upload Image End -->
 
                         <form action="#" method="POST" enctype="multipart/form-data">
