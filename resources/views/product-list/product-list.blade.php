@@ -12,11 +12,11 @@
                     <div class="d-flex align-items-center gap-2">
                         <span>Show</span>
                         <form method="GET" action="{{ route('logistics.invoicelist') }}">
-                            <select name="perPage" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                            {{-- <select name="perPage" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
                                 <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
                                 <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
                                 <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                            </select>
+                            </select> --}}
                         </form>
                     </div>
 
