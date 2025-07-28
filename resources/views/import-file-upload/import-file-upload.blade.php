@@ -157,7 +157,7 @@
                                         <button class="file-upload-button" type="button">
                                             <i class="bi bi-file-earmark-arrow-up"></i> Upload
                                         </button>
-                                        <input type="file" class="file-upload-input @error('regulatoryApprovalDocument') is-invalid @enderror" id="regulatoryApprovalDocument" name="regulatoryApprovalDocument" onchange="showFileName(this, 'regulatoryFileName')" required>
+                                        <input type="file" class="file-upload-input @error('regulatoryApprovalDocument') is-invalid @enderror" id="regulatoryApprovalDocument" name="regulatoryApprovalDocument" onchange="showFileName(this, 'regulatoryFileName')">
                                         <span id="regulatoryFileName" class="file-name">No file chosen</span>
                                     </div>
                                     @error('regulatoryApprovalDocument')
