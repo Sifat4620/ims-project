@@ -131,100 +131,129 @@
                         <script>
                             const challanData = @json($challanJson);
 
-                            function printInvoice() {
-                                const data = challanData;
+                                function printInvoice() {
+    const data = challanData;
 
-                                const content = `
-                                <html>
-                                <head>
-                                    <title>Delivery Challan</title>
-                                    <style>
-                                        body { font-family: Arial; margin: 0; padding: 0; }
-                                        .container { padding: 20px; min-height: 100vh; position: relative; box-sizing: border-box; }
-                                        .footer { position: absolute; bottom: 40px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 14px; }
-                                        .note { text-align: center; font-weight: bold; margin: 30px 0; }
-                                        @media print {
-                                            html, body { height: 100%; }
-                                            .footer { position: absolute; bottom: 40px; }
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="container">
-                                        <div style="text-align: center;">
-                                            <img src='{{ asset('assets/images/logo.png') }}' style="height: 60px;"><br>
-                                            <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">Delivery Challan</h2>
-                                        </div>
+    const chunkItems = (arr, size) => {
+        const result = [];
+        for (let i = 0; i < arr.length; i += size) {
+            result.push(arr.slice(i, i + size));
+        }
+        return result;
+    };
 
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                                            <div>
-                                                <strong>Challan No:</strong> ${data.invoice_number}<br>
-                                                <strong>Customer Address:</strong><br>${data.customer_address}
-                                            </div>
-                                            <div>
-                                                <strong>Date Issued:</strong> ${data.date_issued}<br>
-                                                <strong>PO No.:</strong> ${data.po_number}<br>
-                                                <strong>PO Date:</strong> ${data.po_date}<br>
-                                                <strong>Transporter:</strong> Square Centre (11th Floor), 48, Mohakhali C/A, 1212
-                                            </div>
-                                        </div>
+    const pages = chunkItems(data.items, 10);
 
-                                        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse;">
-                                            <thead style="background-color: #f2f2f2;">
-                                                <tr>
-                                                    <th>SL.</th>
-                                                    <th>Part No.</th>
-                                                    <th>Items Description</th>
-                                                    <th>UoM</th>
-                                                    <th>Qty</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${data.items.map((item, index) => `
-                                                    <tr>
-                                                        <td>${index + 1}</td>
-                                                        <td>${item.part_no}</td>
-                                                        <td>
-                                                            Category: ${item.category}<br>
-                                                            Brand: ${item.brand}<br>
-                                                            Model No: ${item.model_no}<br>
-                                                            Serial Nos: ${item.serial_numbers.join(', ')}<br>
-                                                            Specification: ${item.specification}
-                                                        </td>
-                                                        <td>Pcs</td>
-                                                        <td>${item.quantity}</td>
-                                                    </tr>
-                                                `).join('')}
-                                            </tbody>
-                                        </table>
+    const printPages = pages.map((chunk, pageIndex) => `
+        <div class="page">
+            <div class="header">
+                <div style="text-align: center;">
+                    <img src='{{ asset('assets/images/logo.png') }}' style="height: 60px;"><br>
+                    <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">Delivery Challan</h2>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div>
+                        <strong>Challan No:</strong> ${data.invoice_number}<br>
+                        <strong>Customer Address:</strong><br>${data.customer_address}
+                    </div>
+                    <div>
+                        <strong>Date Issued:</strong> ${data.date_issued}<br>
+                        <strong>PO No.:</strong> ${data.po_number}<br>
+                        <strong>PO Date:</strong> ${data.po_date}<br>
+                        <strong>Transporter:</strong> Square Centre (11th Floor), 48, Mohakhali C/A, 1212
+                    </div>
+                </div>
+            </div>
 
-                                        <div class="note">This delivery challan is generated from software and considered official.</div>
+            <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse;">
+                <thead style="background-color: #f2f2f2;">
+                    <tr>
+                        <th>SL.</th>
+                        <th>Part No.</th>
+                        <th>Items Description</th>
+                        <th>UoM</th>
+                        <th>Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${chunk.map((item, i) => `
+                        <tr>
+                            <td>${pageIndex * 10 + i + 1}</td>
+                            <td>${item.part_no}</td>
+                            <td>
+                                Category: ${item.category}<br>
+                                Brand: ${item.brand}<br>
+                                Model No: ${item.model_no}<br>
+                                Serial Nos: ${item.serial_numbers.join(', ')}<br>
+                                Specification: ${item.specification}
+                            </td>
+                            <td>Pcs</td>
+                            <td>${item.quantity}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
 
-                                        <div class="footer">
-                                            <div>
-                                                <strong>Authorized Signature</strong><br>
-                                                Name: ${data.auth_name}<br>
-                                                Designation: ${data.auth_designation}<br>
-                                                Square InformatiX Ltd<br>
-                                                M: ${data.auth_mobile}
-                                            </div>
-                                            <div>
-                                                <strong>Recipient's Signature</strong><br>
-                                                Name: ${data.rec_name}<br>
-                                                Designation: ${data.rec_designation}<br>
-                                                Organization: ${data.rec_organization}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </body>
-                                </html>
-                                `;
+            <div class="note">This delivery challan is generated from software and considered official.</div>
 
-                                const win = window.open('', '_blank');
-                                win.document.write(content);
-                                win.document.close();
-                                win.print();
-                            }
+            <div class="footer">
+                <div>
+                    <strong>Authorized Signature</strong><br>
+                    Name: ${data.auth_name}<br>
+                    Designation: ${data.auth_designation}<br>
+                    Square InformatiX Ltd<br>
+                    M: ${data.auth_mobile}
+                </div>
+                <div>
+                    <strong>Recipient's Signature</strong><br>
+                    Name: ${data.rec_name}<br>
+                    Designation: ${data.rec_designation}<br>
+                    Organization: ${data.rec_organization}
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    const content = `
+        <html>
+        <head>
+            <title>Delivery Challan</title>
+            <style>
+                body { font-family: Arial; margin: 0; padding: 0; }
+                .page { page-break-after: always; padding: 20px; position: relative; min-height: 100vh; box-sizing: border-box; }
+                .header { margin-bottom: 20px; }
+                .footer {
+                    position: absolute;
+                    bottom: 40px;
+                    left: 20px;
+                    right: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 14px;
+                }
+                .note {
+                    text-align: center;
+                    font-weight: bold;
+                    margin: 30px 0 80px;
+                }
+                @media print {
+                    .page { page-break-after: always; }
+                    .footer { position: absolute; bottom: 40px; }
+                }
+            </style>
+        </head>
+        <body>
+            ${printPages}
+        </body>
+        </html>
+    `;
+
+    const win = window.open('', '_blank');
+    win.document.write(content);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
+}
+
                         </script>
 
                     </div>
