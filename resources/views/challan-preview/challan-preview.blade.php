@@ -128,160 +128,104 @@
                             ];
                         @endphp
 
-                                <script>
-    function printInvoice() {
-        const challanData = @json($challanJson);
+                        <script>
+                            const challanData = @json($challanJson);
 
-        const itemsPerPage = 10;
-        const itemChunks = [];
-        for (let i = 0; i < challanData.items.length; i += itemsPerPage) {
-            itemChunks.push(challanData.items.slice(i, i + itemsPerPage));
-        }
+                            function printInvoice() {
+                                const data = challanData;
 
-        const win = window.open('', '_blank');
-        win.document.write(`
-            <html>
-            <head>
-                <title>Delivery Challan</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .page {
-                        width: 210mm;
-                        height: 297mm;
-                        padding: 20mm;
-                        box-sizing: border-box;
-                        position: relative;
-                        page-break-after: always;
-                        overflow: hidden;
-                        border: 1px solid #ccc;
-                    }
-                    .header {
-                        height: 50mm;
-                        margin-bottom: 10mm;
-                    }
-                    .footer {
-                        position: absolute;
-                        bottom: 20mm;
-                        left: 20mm;
-                        right: 20mm;
-                        display: flex;
-                        justify-content: space-between;
-                        font-size: 14px;
-                    }
-                    .table-container {
-                        max-height: 170mm;
-                        overflow: hidden;
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 10px;
-                    }
-                    th, td {
-                        border: 1px solid black;
-                        padding: 5px;
-                        font-size: 12px;
-                        text-align: center;
-                    }
-                    .note {
-                        text-align: center;
-                        font-weight: bold;
-                        margin-top: 10mm;
-                        margin-bottom: 20mm;
-                    }
-                    @media print {
-                        .page { page-break-after: always; }
-                        .footer { position: absolute; bottom: 20mm; }
-                    }
-                </style>
-            </head>
-            <body>
-        `);
+                                const content = `
+                                <html>
+                                <head>
+                                    <title>Delivery Challan</title>
+                                    <style>
+                                        body { font-family: Arial; margin: 0; padding: 0; }
+                                        .container { padding: 20px; min-height: 100vh; position: relative; box-sizing: border-box; }
+                                        .footer { position: absolute; bottom: 40px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 14px; }
+                                        .note { text-align: center; font-weight: bold; margin: 30px 0; }
+                                        @media print {
+                                            html, body { height: 100%; }
+                                            .footer { position: absolute; bottom: 40px; }
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                        <div style="text-align: center;">
+                                            <img src='{{ asset('assets/images/logo.png') }}' style="height: 60px;"><br>
+                                            <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">Delivery Challan</h2>
+                                        </div>
 
-        itemChunks.forEach((chunk, pageIndex) => {
-            win.document.write(`
-                <div class="page">
-                    <div class="header">
-                        <h1 style="text-align:center">Delivery Challan</h1>
-                        <table style="width:100%; border: none; margin-bottom: 5px;">
-                            <tr>
-                                <td><strong>Challan No:</strong> ${challanData.invoice_no}</td>
-                                <td><strong>Date:</strong> ${challanData.invoice_date}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>PO No:</strong> ${challanData.po_no}</td>
-                                <td><strong>PO Date:</strong> ${challanData.po_date}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Customer Address:</strong> ${challanData.customer_address}</td>
-                                <td><strong>Transport:</strong> ${challanData.transport_info}</td>
-                            </tr>
-                        </table>
-                    </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                                            <div>
+                                                <strong>Challan No:</strong> ${data.invoice_number}<br>
+                                                <strong>Customer Address:</strong><br>${data.customer_address}
+                                            </div>
+                                            <div>
+                                                <strong>Date Issued:</strong> ${data.date_issued}<br>
+                                                <strong>PO No.:</strong> ${data.po_number}<br>
+                                                <strong>PO Date:</strong> ${data.po_date}<br>
+                                                <strong>Transporter:</strong> Square Centre (11th Floor), 48, Mohakhali C/A, 1212
+                                            </div>
+                                        </div>
 
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Part No.</th>
-                                    <th>Category</th>
-                                    <th>Brand</th>
-                                    <th>Model</th>
-                                    <th>Serials</th>
-                                    <th>Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `);
+                                        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse;">
+                                            <thead style="background-color: #f2f2f2;">
+                                                <tr>
+                                                    <th>SL.</th>
+                                                    <th>Part No.</th>
+                                                    <th>Items Description</th>
+                                                    <th>UoM</th>
+                                                    <th>Qty</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${data.items.map((item, index) => `
+                                                    <tr>
+                                                        <td>${index + 1}</td>
+                                                        <td>${item.part_no}</td>
+                                                        <td>
+                                                            Category: ${item.category}<br>
+                                                            Brand: ${item.brand}<br>
+                                                            Model No: ${item.model_no}<br>
+                                                            Serial Nos: ${item.serial_numbers.join(', ')}<br>
+                                                            Specification: ${item.specification}
+                                                        </td>
+                                                        <td>Pcs</td>
+                                                        <td>${item.quantity}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
 
-            chunk.forEach((item, index) => {
-                win.document.write(`
-                    <tr>
-                        <td>${(pageIndex * itemsPerPage) + index + 1}</td>
-                        <td>${item.part_number}</td>
-                        <td>${item.category}</td>
-                        <td>${item.brand}</td>
-                        <td>${item.model_no}</td>
-                        <td>${item.serials.join(', ')}</td>
-                        <td>${item.serials.length}</td>
-                    </tr>
-                `);
-            });
+                                        <div class="note">This delivery challan is generated from software and considered official.</div>
 
-            win.document.write(`
-                            </tbody>
-                        </table>
-                    </div>
+                                        <div class="footer">
+                                            <div>
+                                                <strong>Authorized Signature</strong><br>
+                                                Name: ${data.auth_name}<br>
+                                                Designation: ${data.auth_designation}<br>
+                                                Square InformatiX Ltd<br>
+                                                M: ${data.auth_mobile}
+                                            </div>
+                                            <div>
+                                                <strong>Recipient's Signature</strong><br>
+                                                Name: ${data.rec_name}<br>
+                                                Designation: ${data.rec_designation}<br>
+                                                Organization: ${data.rec_organization}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </body>
+                                </html>
+                                `;
 
-                    <div class="note">We hereby certify that the goods mentioned above are in good condition and delivered as per your order.</div>
-
-                    <div class="footer">
-                        <div>
-                            <p><strong>Authorised By</strong></p>
-                            <p>Name: ${challanData.auth_name}</p>
-                            <p>Mobile: ${challanData.auth_mobile}</p>
-                        </div>
-                        <div>
-                            <p><strong>Received By</strong></p>
-                            <p>Name: ${challanData.rec_name}</p>
-                            <p>Mobile: ${challanData.rec_mobile}</p>
-                        </div>
-                    </div>
-                </div>
-            `);
-        });
-
-        win.document.write(`</body></html>`);
-        win.document.close();
-        setTimeout(() => win.print(), 500);  // Ensures full render before print
-    }
-</script>
-
+                                const win = window.open('', '_blank');
+                                win.document.write(content);
+                                win.document.close();
+                                win.print();
+                            }
+                        </script>
 
                     </div>
                 </div>
