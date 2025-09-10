@@ -57,7 +57,7 @@
                                 <th>Condition</th>
                                 <th>Issued</th>
                                 <th>Barcode</th>
-                                <th>Download</th>
+                                {{-- <th>Download</th> --}}
                             </tr>
                         </thead>
                         <tbody>
