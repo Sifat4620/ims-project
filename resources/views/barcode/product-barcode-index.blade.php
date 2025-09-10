@@ -66,7 +66,7 @@
                                     <td>
                                         <input type="checkbox" name="selected_ids[]" class="form-check-input item-checkbox" value="{{ $item->id }}">
                                     </td>
-                                    <td>{{ $loop->iteration + ($items->currentPage() - 1) * $items->perPage() }}</td>
+                                    {{-- <td>{{ $loop->iteration + ($items->currentPage() - 1) * $items->perPage() }}</td> --}}
                                     <td>{{ $item->lc_po_type }}</td>
                                     <td>{{ $item->brand }}</td>
                                     <td>{{ $item->category }}</td>
@@ -111,7 +111,7 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
+                {{-- <!-- Pagination -->
                 @if ($items->hasPages())
                     <div class="d-flex flex-wrap justify-content-between align-items-center mt-3">
                         <div class="text-secondary small">
@@ -121,7 +121,7 @@
                             {{ $items->links() }}
                         </div>
                     </div>
-                @endif
+                @endif --}}
             </div>
         </form>
     </div>

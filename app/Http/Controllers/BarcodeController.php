@@ -14,7 +14,6 @@ class BarcodeController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = (int) $request->get('perPage', 10);
         $search = $request->get('search', '');
         $searchField = $request->get('search_field', 'all');
         $issueStatus = $request->get('issue_status', '');
@@ -29,21 +28,23 @@ class BarcodeController extends Controller
             $query->where(function ($q) use ($search, $searchField) {
                 if ($searchField === 'all') {
                     $q->where('lc_po_type', 'like', "%{$search}%")
-                      ->orWhere('brand', 'like', "%{$search}%")
-                      ->orWhere('category', 'like', "%{$search}%")
-                      ->orWhere('model_no', 'like', "%{$search}%")
-                      ->orWhere('serial_no', 'like', "%{$search}%");
+                    ->orWhere('brand', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%")
+                    ->orWhere('model_no', 'like', "%{$search}%")
+                    ->orWhere('serial_no', 'like', "%{$search}%");
                 } else {
                     $q->where($searchField, 'like', "%{$search}%");
                 }
             });
         }
 
-        $items = $query->with('itemBarcode')->paginate($perPage)->withQueryString();
+        // ✅ fetch all results (no pagination)
+        $items = $query->with('itemBarcode')->get();
         $title = 'Item Barcode Generator';
 
-        return view('barcode.product-barcode-index', compact('title', 'items', 'search', 'searchField', 'perPage', 'issueStatus'));
+        return view('barcode.product-barcode-index', compact('title', 'items', 'search', 'searchField', 'issueStatus'));
     }
+
 
     public function generate($itemId)
     {
