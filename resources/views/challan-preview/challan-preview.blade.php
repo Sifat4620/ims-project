@@ -128,105 +128,177 @@
                             ];
                         @endphp
 
-                        <script>
-                            const challanData = @json($challanJson);
 
-                            function printInvoice() {
-                                const data = challanData;
 
-                                const content = `
-                                <html>
-                                <head>
-                                    <title>Delivery Challan</title>
-                                    <style>
-                                        body { font-family: Arial; margin: 0; padding: 0; }
-                                        .container { padding: 20px; min-height: 100vh; position: relative; box-sizing: border-box; }
-                                        .footer { position: absolute; bottom: 40px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 14px; }
-                                        .note { text-align: center; font-weight: bold; margin: 30px 0; }
-                                        @media print {
-                                            html, body { height: 100%; }
-                                            .footer { position: absolute; bottom: 40px; }
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="container">
-                                        <div style="text-align: center;">
-                                            <img src='{{ asset('assets/images/logo.png') }}' style="height: 60px;"><br>
-                                            <h2 style="border-bottom: 2px solid #000; padding-bottom: 10px;">Delivery Challan</h2>
-                                        </div>
+{{-- PDF Download script --}}
+                     <script>
+    const challanData = @json($challanJson);
 
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                                            <div>
-                                                <strong>Challan No:</strong> ${data.invoice_number}<br>
-                                                <strong>Customer Address:</strong><br>${data.customer_address}
-                                            </div>
-                                            <div>
-                                                <strong>Date Issued:</strong> ${data.date_issued}<br>
-                                                <strong>PO No.:</strong> ${data.po_number}<br>
-                                                <strong>PO Date:</strong> ${data.po_date}<br>
-                                                <strong>Transporter:</strong> Square Centre (11th Floor), 48, Mohakhali C/A, 1212
-                                            </div>
-                                        </div>
+    function printInvoice() {
+        const data = challanData;
 
-                                        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse;">
-                                            <thead style="background-color: #f2f2f2;">
-                                                <tr>
-                                                    <th>SL.</th>
-                                                    <th>Part No.</th>
-                                                    <th>Items Description</th>
-                                                    <th>UoM</th>
-                                                    <th>Qty</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${data.items.map((item, index) => `
-                                                    <tr>
-                                                        <td>${index + 1}</td>
-                                                        <td>${item.part_no}</td>
-                                                        <td>
-                                                            Category: ${item.category}<br>
-                                                            Brand: ${item.brand}<br>
-                                                            Model No: ${item.model_no}<br>
-                                                            Serial Nos: ${item.serial_numbers.join(', ')}<br>
-                                                            Specification: ${item.specification}
-                                                        </td>
-                                                        <td>Pcs</td>
-                                                        <td>${item.quantity}</td>
-                                                    </tr>
-                                                `).join('')}
-                                            </tbody>
-                                        </table>
+        const rowsHtml = data.items.map((item, index) => {
+            // Page break row after every 6 items
+             const isBreakPoint = ((index + 1) % 6 === 0) && ((index + 1) < data.items.length);
+             const breakRow = isBreakPoint ? `<tr style="page-break-after:always;"></tr>` : "";
 
-                                        <div class="note">This delivery challan is generated from software and considered official.</div>
 
-                                        <div class="footer">
-                                            <div>
-                                                <strong>Authorized Signature</strong><br>
-                                                Name: ${data.auth_name}<br>
-                                                Designation: ${data.auth_designation}<br>
-                                                Square InformatiX Ltd<br>
-                                                M: ${data.auth_mobile}
-                                            </div>
-                                            <div>
-                                                <strong>Recipient's Signature</strong><br>
-                                                Name: ${data.rec_name}<br>
-                                                Designation: ${data.rec_designation}<br>
-                                                Organization: ${data.rec_organization}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </body>
-                                </html>
-                                `;
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.part_no}</td>
+                    <td>
+                        Category: ${item.category}<br>
+                        Brand: ${item.brand}<br>
+                        Model No: ${item.model_no}<br>
+                        Serial Nos: ${(item.serial_numbers || []).join(', ')}<br>
+                        Specification: ${item.specification}
+                    </td>
+                    <td>Pcs</td>
+                    <td>${item.quantity}</td>
+                </tr>
+                ${breakRow}
+            `;
+        }).join('');
 
-                                const win = window.open('', '_blank');
-                                win.document.write(content);
-                                win.document.close();
-                                win.print();
-                            }
-                        </script>
+        const content = `
+        <html>
+        <head>
+            <title>Delivery Challan</title>
+            <style>
+                body { font-family: Arial; margin: 0; padding: 0; }
 
+                /* Each page becomes a grid: header | content | footer */
+                .page {
+                    display: grid;
+                    grid-template-rows: auto 1fr auto;
+                    min-height: 100vh;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+
+                .header {
+                    text-align: center;
+                    margin-bottom: 10px;
+                }
+                .header h2 {
+                    border-bottom: 2px solid #000;
+                    padding-bottom: 6px;
+                    display: inline-block;
+                    margin: 6px 0 0;
+                }
+                .meta {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 14px;
+                    margin-top: 8px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 12px;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 6px 8px;
+                    vertical-align: top;
+                }
+                thead th {
+                    background: #f2f2f2;
+                }
+
+                .note {
+                    text-align: center;
+                    font-weight: bold;
+                    margin: 20px 0;
+                    font-size: 12px;
+                }
+
+                .footer {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 14px;
+                    margin-top: 20px;
+                }
+
+                @media print {
+                    @page { margin: 12mm; }
+                    .page { page-break-after: always; }
+                    thead { display: table-header-group; }
+                    tfoot { display: table-footer-group; }
+                    tr { page-break-inside: avoid; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="page">
+                <!-- Header -->
+                <div class="header">
+                    <img src='{{ asset('assets/images/logo.png') }}' style="height: 50px;"><br>
+                    <h2>Delivery Challan</h2>
+                    <div class="meta">
+                        <div>
+                            <strong>Challan No:</strong> ${data.invoice_number}<br>
+                            <strong>Customer Address:</strong><br>${data.customer_address}
+                        </div>
+                        <div>
+                            <strong>Date Issued:</strong> ${data.date_issued}<br>
+                            <strong>PO No.:</strong> ${data.po_number}<br>
+                            <strong>PO Date:</strong> ${data.po_date}<br>
+                            <strong>Transporter:</strong> Square Centre (11th Floor), 48, Mohakhali C/A, 1212
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL.</th>
+                                <th>Part No.</th>
+                                <th>Items Description</th>
+                                <th>UoM</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                    <div class="note">This delivery challan is generated from software and considered official.</div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                    <div>
+                        <strong>Authorized Signature</strong><br>
+                        Name: ${data.auth_name}<br>
+                        Designation: ${data.auth_designation}<br>
+                        Square InformatiX Ltd<br>
+                        M: ${data.auth_mobile}
+                    </div>
+                    <div>
+                        <strong>Recipient's Signature</strong><br>
+                        Name: ${data.rec_name}<br>
+                        Designation: ${data.rec_designation}<br>
+                        Organization: ${data.rec_organization}
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const win = window.open('', '_blank');
+        win.document.write(content);
+        win.document.close();
+        win.print();
+    }
+</script>
+
+{{-- PDF Download script --}}
                     </div>
                 </div>
             </div>
