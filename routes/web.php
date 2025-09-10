@@ -285,6 +285,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/barcode/double-check', [BarcodeController::class, 'doubleCheck'])->name('barcode.double-check');
             Route::get('/barcode/ajax-check', [BarcodeController::class, 'ajaxDoubleCheck'])->name('barcode.ajax-check');
 
+            Route::post('/barcode/bulk-status', [BarcodeController::class, 'bulkStatus'])->name('barcode.bulkStatus');
+            
 
         // Barcode end  
         

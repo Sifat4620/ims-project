@@ -19,7 +19,7 @@ class InvoiceListController extends Controller
         $query = Item::query();
 
         // Only show items where status is 'No'
-        $query->where('status', 'No');
+        $query->whereIn('status', ['No', 'Processing']);
 
         // Apply search logic
         if ($searchQuery) {

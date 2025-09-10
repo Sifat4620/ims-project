@@ -115,10 +115,20 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="bg-{{ $item->status == 'Confirmed' ? 'danger' : 'success' }}-focus text-{{ $item->status == 'Confirmed' ? 'danger' : 'success' }}-main px-32 py-2 rounded-pill fw-medium text-sm">
+                                    <span class="
+                                        @if($item->status === 'Confirmed')
+                                            bg-danger-focus text-danger-main
+                                        @elseif($item->status === 'Processing')
+                                            bg-warning-focus text-warning-main
+                                        @else
+                                            bg-success-focus text-success-main
+                                        @endif
+                                        px-32 py-2 rounded-pill fw-medium text-sm
+                                    ">
                                         {{ $item->status }}
                                     </span>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

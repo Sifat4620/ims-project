@@ -227,4 +227,70 @@ class BarcodeController extends Controller
 
         return true;
     }
+    
+
+
+     /**
+     * NEW: Bulk flip status from "Processing" to "Delivery" by scanned barcodes.
+     * Expected payload: { items: [ { barcode: "123...", quantity: 1 }, ... ] }
+     */
+    public function bulkStatus(Request $request)
+    {
+        $items = $request->input('items', []);
+
+        if (empty($items) || !is_array($items)) {
+            return response()->json(['success' => false, 'message' => 'No items provided.'], 422);
+        }
+
+        $barcodes = collect($items)
+            ->pluck('barcode')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($barcodes->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No valid barcodes provided.'], 422);
+        }
+
+        // Find items by barcode via ItemBarcode relation
+        $matchingItems = \App\Models\Item::whereHas('itemBarcode', function ($q) use ($barcodes) {
+                $q->whereIn('barcode_string', $barcodes);
+            })
+            ->with(['itemBarcode' => function ($q) {
+                $q->select('id', 'item_id', 'barcode_string');
+            }])
+            ->get(['id', 'status']);
+
+        if ($matchingItems->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No items found for provided barcodes.'], 404);
+        }
+
+        // Update any item that is NOT already "Processing"
+        $toUpdateIds = $matchingItems
+            ->filter(fn ($i) => $i->status !== 'Processing')
+            ->pluck('id')
+            ->all();
+
+        $updatedCount = 0;
+        if (!empty($toUpdateIds)) {
+            $updatedCount = \App\Models\Item::whereIn('id', $toUpdateIds)
+                ->update(['status' => 'Processing', 'updated_at' => now()]);
+        }
+
+        $result = [
+            'updated'           => $updatedCount,
+            'total_matched'     => $matchingItems->count(),
+            'already_processing'=> $matchingItems->where('status', 'Processing')->count(),
+            'changed_from'      => $matchingItems
+                                    ->filter(fn ($i) => $i->status !== 'Processing')
+                                    ->pluck('status')
+                                    ->unique()
+                                    ->values(),
+        ];
+
+        return response()->json(['success' => true, 'result' => $result]);
+    }
+
+
+
 }
