@@ -10,7 +10,9 @@ class InStockController extends Controller
     public function index()
     {
         // Fetch all items with barcode relationship
-        $items = Item::with('itemBarcode')->get();
+        $items = Item::with('itemBarcode')
+                ->whereIn('status', ['No', 'Processing'])
+                ->get();
 
         $title = 'In Stock';
         return view('item-received-data.item-received-data', compact('title', 'items'));
