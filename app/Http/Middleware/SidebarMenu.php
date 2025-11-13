@@ -220,6 +220,13 @@ class SidebarMenu
                                 'page_id' => 2,
                                 'link' => route('upgrade.info'), 
                                 'icon_color' => 'text-warning-main'
+                            ],
+
+                            [
+                                'name' => 'Delivery Challan Download',
+                                'page_id' => 2,
+                                'link' => route('delivery.challan.download'), 
+                                'icon_color' => 'text-primary-main'
                             ]
                         ]
                     ]

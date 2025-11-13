@@ -30,6 +30,7 @@ use App\Http\Controllers\UpgradeInfoController;
 use App\Http\Controllers\ConfirmInvoiceController;
 use App\Http\Controllers\InvoiceDownloadController;
 use App\Http\Controllers\BarcodeController;
+use App\Http\Controllers\DeliveryChallanDownloadController;
 
 
 // Show the sign-in page at the root URL
@@ -261,6 +262,16 @@ Route::middleware('auth')->group(function () {
 
             Route::put('/upgrade-info/{id}', [UpgradeInfoController::class, 'update'])->name('upgrade.info.update');
 
+
+
+            
+
+            Route::get('/delivery-challan/download', [DeliveryChallanDownloadController::class, 'index'])
+             ->name('delivery.challan.download');
+
+
+
+
         // Access point end
 
 
@@ -277,9 +288,6 @@ Route::middleware('auth')->group(function () {
 
 
             Route::post('/barcode/bulk-pdf', [BarcodeController::class, 'bulkPdf'])->name('barcode.bulkPdf');
-
-        
-           
 
 
             Route::get('/barcode/double-check', [BarcodeController::class, 'doubleCheck'])->name('barcode.double-check');
