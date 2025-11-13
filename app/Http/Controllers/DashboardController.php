@@ -20,32 +20,24 @@ class DashboardController extends Controller
     public function index()
     {
         try {
-            // === USER INFO ===
-            $user = Auth::user();
-            $roles = $user?->roles ?? [];
-
-            // === STOCK COUNTS ===
-            $totalStockIn = Item::where('status', 'No')->count();      // Still in stock
-            $totalStockOut = Item::where('status', 'Yes')->count();     // Issued or moved
+            // === BASIC COUNTS ===
+            $totalStockIn = Item::where('status', 'No')->count();     // Still in stock
+            $totalStockOut = Item::where('status', 'Yes')->count();    // Issued or moved
             $totalReturns = Returns::count();
             $totalDamaged = FaultyItem::count();
             $totalProducts = Product::count();
 
-            // === UNIQUE BRANDS AND CATEGORIES ===
-            $totalBrands = Item::distinct('brand')->count('brand');
-            $totalCategories = Item::distinct('category')->count('category');
+            // === GROUPED SUMMARY ===
 
-            // === BRAND-CATEGORY-PRODUCT SUMMARY ===
-            $items = Item::all(); // all items
-            $brandCategorySummary = [];
+            // Brand & Category summary (Total Products in Stock per Brand/Category)
+            $brandCategorySummary = Item::where('status', 'No')
+                ->get()
+                ->groupBy('brand')
+                ->map(function ($brandItems) {
+                    return $brandItems->groupBy('category');
+                });
 
-            foreach ($items as $item) {
-                $brand = $item->brand ?: 'Unknown';
-                $category = $item->category ?: 'Unknown';
-                $brandCategorySummary[$brand][$category][] = $item;
-            }
-
-            // === STOCK SUMMARY BY CATEGORY / BRAND / TYPE ===
+            // Optionally, you can also get top 5 categories or brands if needed
             $stockByCategory = Item::select('category')
                 ->selectRaw('COUNT(*) as total')
                 ->groupBy('category')
@@ -60,41 +52,31 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get();
 
-            $stockByType = Item::select('lc_po_type')
-                ->selectRaw('COUNT(*) as total')
-                ->groupBy('lc_po_type')
-                ->orderByDesc('total')
-                ->get();
-
             // === RECENT ITEMS / PRODUCTS ===
-            $recentItems = Item::latest('created_at')
-                ->take(5)
-                ->get(['id', 'model_no', 'brand', 'category', 'status', 'created_at']);
+            $recentItems = Item::latest('created_at')->take(5)->get(['id', 'model_no', 'brand', 'category', 'status', 'created_at']);
+            $recentProducts = Product::latest('created_at')->take(5)->get(['id', 'product_id', 'category', 'product_brand', 'entry_date']);
 
-            $recentProducts = Product::latest('created_at')
-                ->take(5)
-                ->get(['id', 'product_id', 'category', 'product_brand', 'entry_date']);
+            // === USER INFO ===
+            $user = Auth::user();
+            $roles = $user?->roles ?? [];
 
             // === DASHBOARD TITLE ===
             $title = 'Dashboard Overview';
 
-            // === RETURN VIEW WITH ALL DATA ===
+            // === PASS ALL DATA TO VIEW ===
             return view('index', compact(
                 'title',
-                'roles',
                 'totalStockIn',
                 'totalStockOut',
                 'totalReturns',
                 'totalDamaged',
                 'totalProducts',
-                'totalBrands',
-                'totalCategories',
-                'brandCategorySummary',
                 'stockByCategory',
                 'stockByBrand',
-                'stockByType',
                 'recentItems',
-                'recentProducts'
+                'recentProducts',
+                'roles',
+                'brandCategorySummary' // <-- Pass summary to Blade
             ));
 
         } catch (\Exception $e) {
