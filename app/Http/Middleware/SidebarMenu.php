@@ -197,13 +197,13 @@ class SidebarMenu
 
             ],
 
-            // Admin can only
+            // Admin and Inventory Entry can only
             [
                 'title' => 'Download Document & Product Modification',
                 'icon' => 'icon-park-outline:download',
                 'link' => 'javascript:void(0)', 
                 'icon_color' => 'text-success-main',
-                'visibility' => Auth::check() && Bouncer::is(Auth::user())->an('Admin'),
+                'visibility' => Auth::check() && (Bouncer::is(Auth::user())->an('Admin') || Bouncer::is(Auth::user())->an('Inventory Entry')),
                 'submenus' => [
                     [
                         'name' => '', // Wrapper level
