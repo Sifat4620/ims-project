@@ -200,7 +200,7 @@
                                 ['item' => 'Master Data Entry', 'roles' => ['Admin', 'Inventory Entry']],
                                 ['item' => 'Return Product Management', 'roles' => ['Admin', 'Inventory Manager']],
                                 ['item' => 'Inventory Management', 'roles' => ['All authenticated users']],
-                                ['item' => 'Accessing & Downloading Your Info', 'roles' => ['Admin']],
+                                ['item' => 'Accessing & Downloading Your Info', 'roles' => ['Admin','Inventory Entry']],
                                 ['item' => 'Security', 'roles' => ['Admin']],
                                 ['item' => 'System Monitoring', 'roles' => ['Admin']],
                             ];
