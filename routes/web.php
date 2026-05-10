@@ -271,7 +271,6 @@ Route::middleware('auth')->group(function () {
 
 
 
-
         // Access point end
 
 
