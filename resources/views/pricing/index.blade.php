@@ -4,7 +4,7 @@
 <div class="row gy-4">
 
     {{-- Search & Filter Card --}}
-    <div class="col-lg-12">
+    {{-- <div class="col-lg-12">
         <div class="card">
             <div class="card-body py-3">
                 <form method="GET" action="{{ route('pricing.index') }}" class="d-flex flex-wrap gap-2 align-items-center">
@@ -25,7 +25,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Table Card --}}
     <div class="col-lg-12">
