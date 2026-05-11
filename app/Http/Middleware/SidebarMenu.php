@@ -172,7 +172,6 @@ class SidebarMenu
                 ),
             ],
 
-
             // Solution Team Member only sees this
             [
                 'title' => 'Pricing Section',
@@ -180,7 +179,8 @@ class SidebarMenu
                 'link' => route('pricing.index'),
                 'icon_color' => 'text-success-main',
                 'visibility' => Auth::check() && (
-                    Bouncer::is(Auth::user())->an('Solution Team Member')
+                    Bouncer::is(Auth::user())->an('Solution Team Member') ||
+                    Bouncer::is(Auth::user())->an('Admin')
                 ),
             ],
                         
