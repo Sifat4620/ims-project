@@ -58,7 +58,7 @@
                         <tbody>
                             @forelse($items as $index => $item)
                                 <tr>
-                                    <td>{{ $items->firstItem() + $index }}</td>
+                                    <td><td>{{ $loop->iteration }}</td></td>
                                     <td>
                                         <a href="javascript:void(0)" class="text-primary-600">
                                             {{ $item->serial_no }}
