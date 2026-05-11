@@ -1,6 +1,17 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y libzip-dev zip
+# Install system dependencies including git
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Disable QUIC/HTTP3 to fix GitHub download issues inside Docker
+RUN echo "--http1.1" >> /etc/curlrc
+
 RUN a2enmod rewrite
 RUN docker-php-ext-install pdo_mysql zip
 
@@ -11,8 +22,11 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 COPY . /var/www/html
 WORKDIR /var/www/html
 
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install
+
+# Install dependencies with prefer-dist to avoid git cloning
+RUN composer install --prefer-dist --no-interaction --optimize-autoloader
 
 # Copy .env
 RUN cp .env.example .env
