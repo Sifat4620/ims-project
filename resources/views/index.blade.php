@@ -16,7 +16,7 @@
                             </span>
                         </div>
                         <div>
-                            <span class="fw-medium text-md text-secondary-light">Currents Time & Date</span>
+                            <span class="fw-medium text-md text-secondary-light">Current Time & Date</span>
                             <h6 class="fw-bold my-1" id="clock">--:--:--</h6>
                             <span class="text-secondary-light" id="date">Loading...</span>
                         </div>
