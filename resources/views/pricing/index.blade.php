@@ -2,37 +2,31 @@
 
 @section('content')
 <div class="row gy-4">
+    <div class="col-lg-12">
+        <div class="card h-100">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="mb-0">{{ $title }}</h5>
 
-    {{-- Search & Filter Card --}}
-    {{-- <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body py-3">
-                <form method="GET" action="{{ route('pricing.index') }}" class="d-flex flex-wrap gap-2 align-items-center">
+                {{-- Search & Filter --}}
+                {{-- <form method="GET" action="{{ route('pricing.index') }}" class="d-flex flex-wrap gap-2 align-items-center">
                     <input
                         type="text"
                         name="search"
-                        class="form-control w-auto"
+                        class="form-control form-control-sm"
                         placeholder="Search serial / model..."
                         value="{{ request('search') }}"
+                        style="width: 200px;"
                     >
-                    <select name="filter" class="form-select w-auto">
+                    <select name="filter" class="form-select form-select-sm" style="width: 140px;">
                         <option value="">All Items</option>
                         <option value="priced"   {{ request('filter') === 'priced'   ? 'selected' : '' }}>Priced</option>
                         <option value="unpriced" {{ request('filter') === 'unpriced' ? 'selected' : '' }}>Unpriced</option>
                     </select>
-                    <button type="submit" class="btn btn-primary-600">Filter</button>
-                    <a href="{{ route('pricing.index') }}" class="btn btn-secondary">Reset</a>
-                </form>
+                    <button type="submit" class="btn btn-sm btn-primary-600">Filter</button>
+                    <a href="{{ route('pricing.index') }}" class="btn btn-sm btn-secondary">Reset</a>
+                </form> --}}
             </div>
-        </div>
-    </div> --}}
 
-    {{-- Table Card --}}
-    <div class="col-lg-12">
-        <div class="card h-100">
-            <div class="card-header">
-                <h5 class="mb-0">{{ $title }}</h5>
-            </div>
             <div class="card-body">
 
                 @if(session('success'))
@@ -56,9 +50,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($items as $index => $item)
+                            @forelse($items as $item)
                                 <tr>
-                                    <td><td>{{ $loop->iteration }}</td></td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <a href="javascript:void(0)" class="text-primary-600">
                                             {{ $item->serial_no }}
@@ -107,16 +101,11 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center">No items found.</td>
+                                    <td colspan="10" class="text-center py-4">No items found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-
-                {{-- Pagination --}}
-                <div class="d-flex justify-content-end mt-3">
-                    {{ $items->links() }}
                 </div>
 
             </div>
@@ -174,7 +163,7 @@
         const serial = btn.getAttribute('data-serial');
         const price  = btn.getAttribute('data-price');
 
-        document.getElementById('modalItemId').value      = itemId;
+        document.getElementById('modalItemId').value       = itemId;
         document.getElementById('modalSerial').textContent = serial;
         document.getElementById('modalPrice').value        = price || '';
     });
