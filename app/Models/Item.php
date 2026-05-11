@@ -83,6 +83,10 @@ class Item extends Model
          return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
   
+    public function pricing()
+    {
+        return $this->hasOne(\App\Models\Pricing::class, 'item_id');
+    }
 
 
 
