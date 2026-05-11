@@ -28,7 +28,7 @@ class PricingController extends Controller
             });
         }
 
-        $items = $query->latest()->paginate(20)->withQueryString();
+        $items = $query->latest()->get();
 
         $title = 'Pricing Section';
         return view('pricing.index', compact('title', 'items'));
