@@ -171,7 +171,19 @@ class SidebarMenu
                     Bouncer::is(Auth::user())->an('Admin')
                 ),
             ],
-            
+
+
+            // Solution Team Member only sees this
+            [
+                'title' => 'Pricing Section',
+                'icon' => 'simple-line-icons:tag',
+                'link' => route('pricing.index'),
+                'icon_color' => 'text-success-main',
+                'visibility' => Auth::check() && (
+                    Bouncer::is(Auth::user())->an('Solution Team Member')
+                ),
+            ],
+                        
             // All User see this
             [
                 'title' => 'Inventory Management',

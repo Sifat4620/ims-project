@@ -31,6 +31,7 @@ use App\Http\Controllers\ConfirmInvoiceController;
 use App\Http\Controllers\InvoiceDownloadController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\DeliveryChallanDownloadController;
+use App\Http\Controllers\PricingController;
 
 
 // Show the sign-in page at the root URL
@@ -296,6 +297,14 @@ Route::middleware('auth')->group(function () {
             
 
         // Barcode end  
+
+
+
+
+
+        // // Pricing Section
+        Route::get('/pricing', [PricingController::class, 'index'])->name('pricing.index');
+        Route::post('/pricing/store', [PricingController::class, 'store'])->name('pricing.store');
         
 
 
