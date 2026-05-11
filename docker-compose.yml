@@ -1,5 +1,6 @@
 networks:
   application:
+
 services:
   app:
     build:
@@ -8,12 +9,9 @@ services:
     container_name: laravel-app
     ports:
       - "8000:80"
-    volumes:
-      - .:/var/www/html
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_KEY: base64:6QxqrJj6Rqsx3rmBMsMLN91C/iCIgbBDX5U8cB1uRdE=
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306
@@ -21,10 +19,11 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: root
     depends_on:
-      - mysql
-      - mailpit
+      mysql:
+        condition: service_healthy
     networks:
       - application
+
   mysql:
     image: mysql:8.0
     container_name: laravel-mysql
@@ -42,6 +41,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   mailpit:
     image: axllent/mailpit
     container_name: mailpit
@@ -50,5 +50,6 @@ services:
       - "8025:8025"
     networks:
       - application
+
 volumes:
   dbdata:
