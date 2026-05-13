@@ -35,7 +35,8 @@ class PricingController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
+        // dd($request->all());
         $request->validate([
             'item_id' => 'required|exists:items,id',
             'price'   => 'required|numeric|min:0',

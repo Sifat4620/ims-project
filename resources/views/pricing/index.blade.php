@@ -4,27 +4,8 @@
 <div class="row gy-4">
     <div class="col-lg-12">
         <div class="card h-100">
-            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="card-header">
                 <h5 class="mb-0">{{ $title }}</h5>
-
-                {{-- Search & Filter --}}
-                {{-- <form method="GET" action="{{ route('pricing.index') }}" class="d-flex flex-wrap gap-2 align-items-center">
-                    <input
-                        type="text"
-                        name="search"
-                        class="form-control form-control-sm"
-                        placeholder="Search serial / model..."
-                        value="{{ request('search') }}"
-                        style="width: 200px;"
-                    >
-                    <select name="filter" class="form-select form-select-sm" style="width: 140px;">
-                        <option value="">All Items</option>
-                        <option value="priced"   {{ request('filter') === 'priced'   ? 'selected' : '' }}>Priced</option>
-                        <option value="unpriced" {{ request('filter') === 'unpriced' ? 'selected' : '' }}>Unpriced</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary-600">Filter</button>
-                    <a href="{{ route('pricing.index') }}" class="btn btn-sm btn-secondary">Reset</a>
-                </form> --}}
             </div>
 
             <div class="card-body">
@@ -88,9 +69,7 @@
                                     <td>
                                         <button
                                             type="button"
-                                            class="btn btn-sm btn-primary-600"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#priceModal"
+                                            class="btn btn-sm btn-primary-600 open-price-modal"
                                             data-item-id="{{ $item->id }}"
                                             data-serial="{{ $item->serial_no }}"
                                             data-price="{{ $item->pricing->price ?? '' }}"
@@ -109,7 +88,7 @@
                 </div>
 
             </div>
-        </div> <!-- card end -->
+        </div>
     </div>
 </div>
 
@@ -153,19 +132,42 @@
     </div>
 </div>
 
-@endsection
-
-@section('extra-js')
 <script>
-    document.getElementById('priceModal').addEventListener('show.bs.modal', function (event) {
-        const btn    = event.relatedTarget;
-        const itemId = btn.getAttribute('data-item-id');
-        const serial = btn.getAttribute('data-serial');
-        const price  = btn.getAttribute('data-price');
+    document.addEventListener('DOMContentLoaded', function () {
 
-        document.getElementById('modalItemId').value       = itemId;
-        document.getElementById('modalSerial').textContent = serial;
-        document.getElementById('modalPrice').value        = price || '';
+        var modalEl  = document.getElementById('priceModal');
+        var itemInput = document.getElementById('modalItemId');
+        var serialEl  = document.getElementById('modalSerial');
+        var priceInput = document.getElementById('modalPrice');
+
+        document.querySelectorAll('.open-price-modal').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+
+                var itemId = btn.getAttribute('data-item-id');
+                var serial = btn.getAttribute('data-serial');
+                var price  = btn.getAttribute('data-price');
+
+                console.log('Clicked - item_id:', itemId, 'serial:', serial, 'price:', price);
+
+                itemInput.value       = itemId;
+                serialEl.textContent  = serial;
+                priceInput.value      = price || '';
+
+                // Try Bootstrap 5 first, fallback to jQuery
+                if (typeof bootstrap !== 'undefined') {
+                    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                } else if (typeof $ !== 'undefined') {
+                    $('#priceModal').modal('show');
+                } else {
+                    console.error('Bootstrap JS not loaded');
+                }
+            });
+        });
+
     });
 </script>
+
 @endsection
+
+
